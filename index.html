@@ -508,24 +508,23 @@
     .nav-tab { padding: 12px 14px; font-size: 13px; }
   }
 
-  /* ===== CHAT PANEL ===== */
+  /* ========== CHAT PANEL ========== */
   .chat-toggle-btn {
     position: fixed;
-    bottom: 24px;
-    right: 24px;
-    width: 56px;
-    height: 56px;
+    bottom: 28px;
+    right: 28px;
+    width: 60px;
+    height: 60px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #1e3a8a, #2563eb);
+    background: linear-gradient(135deg, #1d4ed8, #2563eb);
     color: white;
     border: none;
     cursor: pointer;
-    font-size: 24px;
-    box-shadow: var(--shadow-lg);
-    z-index: 1000;
     display: flex;
     align-items: center;
     justify-content: center;
+    box-shadow: 0 8px 20px rgba(37,99,235,0.35);
+    z-index: 1000;
     transition: transform 0.2s, box-shadow 0.2s;
   }
   .chat-toggle-btn:hover { transform: scale(1.08); box-shadow: 0 12px 24px rgba(37,99,235,0.4); }
@@ -537,21 +536,22 @@
     width: 400px;
     height: 100vh;
     background: white;
-    box-shadow: -4px 0 24px rgba(0,0,0,0.15);
-    z-index: 1001;
+    box-shadow: -4px 0 24px rgba(0,0,0,0.12);
+    z-index: 999;
     display: flex;
     flex-direction: column;
-    transition: right 0.3s ease;
+    transition: right 0.3s cubic-bezier(0.4,0,0.2,1);
+    border-left: 1px solid var(--gray-200);
   }
   .chat-panel.open { right: 0; }
-  @media (max-width: 480px) {
+  @media(max-width:480px) {
     .chat-panel { width: 100vw; right: -100vw; }
   }
 
   .chat-header {
-    background: linear-gradient(135deg, #1e3a8a, #2563eb);
+    background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
     color: white;
-    padding: 16px 20px;
+    padding: 16px;
     display: flex;
     align-items: center;
     gap: 12px;
@@ -568,12 +568,11 @@
     height: 32px;
     border-radius: 8px;
     cursor: pointer;
-    font-size: 18px;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: background 0.15s;
     flex-shrink: 0;
+    transition: background 0.15s;
   }
   .chat-close-btn:hover { background: rgba(255,255,255,0.25); }
 
@@ -583,8 +582,8 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 32px 24px;
     gap: 14px;
+    padding: 32px 24px;
     text-align: center;
   }
   .chat-setup-icon { font-size: 48px; }
@@ -593,11 +592,9 @@
   .chat-setup-input {
     width: 100%;
     padding: 10px 14px;
-    border: 1px solid var(--gray-300);
+    border: 1.5px solid var(--gray-300);
     border-radius: 8px;
-    font-size: 13px;
-    font-family: monospace;
-    color: var(--gray-700);
+    font-size: 14px;
     outline: none;
     transition: border-color 0.15s;
   }
@@ -605,7 +602,7 @@
   .chat-setup-btn {
     width: 100%;
     padding: 11px;
-    background: linear-gradient(135deg, #1e3a8a, #2563eb);
+    background: var(--primary);
     color: white;
     border: none;
     border-radius: 8px;
@@ -623,41 +620,40 @@
     flex-direction: column;
     overflow: hidden;
   }
-
   .chat-suggestions {
-    padding: 10px 16px 4px;
     display: flex;
-    gap: 6px;
     flex-wrap: wrap;
+    gap: 6px;
+    padding: 12px 14px 0;
     flex-shrink: 0;
   }
   .chat-suggestion {
-    padding: 4px 10px;
     font-size: 12px;
-    border: 1px solid var(--gray-300);
+    padding: 5px 10px;
+    border: 1.5px solid var(--gray-200);
     border-radius: 99px;
+    background: white;
     cursor: pointer;
     color: var(--gray-600);
-    background: white;
-    white-space: nowrap;
     transition: all 0.15s;
+    white-space: nowrap;
   }
   .chat-suggestion:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
 
   .chat-messages {
     flex: 1;
     overflow-y: auto;
-    padding: 12px 16px;
+    padding: 12px 14px;
     display: flex;
     flex-direction: column;
     gap: 12px;
+    scroll-behavior: smooth;
   }
-
   .chat-message { display: flex; gap: 8px; align-items: flex-start; }
   .chat-message.user { flex-direction: row-reverse; }
   .chat-avatar {
-    width: 30px;
-    height: 30px;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -669,21 +665,22 @@
   .chat-avatar.user-av { background: var(--gray-100); }
 
   .chat-bubble {
-    max-width: 82%;
-    padding: 9px 13px;
-    border-radius: 12px;
-    font-size: 13px;
+    max-width: 78%;
+    padding: 10px 13px;
+    border-radius: 14px;
+    font-size: 13.5px;
     line-height: 1.55;
   }
   .chat-bubble.ai {
-    background: var(--gray-100);
+    background: var(--gray-50);
+    border: 1px solid var(--gray-200);
+    border-top-left-radius: 4px;
     color: var(--gray-800);
-    border-bottom-left-radius: 4px;
   }
   .chat-bubble.user {
-    background: linear-gradient(135deg, #1e3a8a, #2563eb);
+    background: var(--primary);
     color: white;
-    border-bottom-right-radius: 4px;
+    border-top-right-radius: 4px;
   }
   .chat-bubble ol, .chat-bubble ul { padding-left: 18px; margin: 6px 0; }
   .chat-bubble li { margin-bottom: 4px; }
@@ -693,32 +690,33 @@
   .chat-bubble p { margin: 4px 0; }
 
   .chat-action-tag {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    background: var(--success-light);
-    border: 1px solid #bbf7d0;
-    border-radius: 6px;
-    padding: 5px 10px;
+    display: inline-block;
+    background: var(--primary-light);
+    color: var(--primary-dark);
+    border: 1px solid #bfdbfe;
+    border-radius: 99px;
     font-size: 11px;
-    color: var(--success);
-    margin-top: 6px;
-    font-weight: 500;
+    font-weight: 600;
+    padding: 1px 8px;
+    margin: 0 2px;
+    vertical-align: middle;
   }
 
   .chat-typing {
     display: flex;
     gap: 4px;
     padding: 10px 14px;
-    background: var(--gray-100);
-    border-radius: 12px;
-    border-bottom-left-radius: 4px;
+    background: var(--gray-50);
+    border: 1px solid var(--gray-200);
+    border-radius: 14px;
+    border-top-left-radius: 4px;
     width: fit-content;
   }
   .chat-typing span {
     width: 7px; height: 7px;
     border-radius: 50%;
     background: var(--gray-400);
+    display: block;
     animation: chatDot 1.4s infinite ease-in-out;
   }
   .chat-typing span:nth-child(2) { animation-delay: 0.2s; }
@@ -726,35 +724,36 @@
   @keyframes chatDot { 0%,80%,100%{transform:scale(0.8);opacity:0.5} 40%{transform:scale(1.1);opacity:1} }
 
   .chat-footer {
-    border-top: 1px solid var(--gray-200);
-    padding: 10px 16px;
     display: flex;
     gap: 8px;
-    align-items: flex-end;
+    padding: 10px 14px;
+    border-top: 1px solid var(--gray-200);
     flex-shrink: 0;
+    align-items: flex-end;
   }
   .chat-input {
     flex: 1;
-    border: 1px solid var(--gray-300);
+    padding: 9px 12px;
+    border: 1.5px solid var(--gray-300);
     border-radius: 10px;
-    padding: 8px 12px;
-    font-size: 13px;
-    font-family: inherit;
+    font-size: 13.5px;
     resize: none;
     outline: none;
-    max-height: 100px;
+    font-family: inherit;
     line-height: 1.5;
+    max-height: 120px;
+    overflow-y: auto;
     transition: border-color 0.15s;
   }
   .chat-input:focus { border-color: var(--primary); }
   .chat-send-btn {
-    width: 34px; height: 34px;
-    border-radius: 8px;
+    width: 40px;
+    height: 40px;
     background: var(--primary);
     color: white;
     border: none;
+    border-radius: 10px;
     cursor: pointer;
-    font-size: 15px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1414,16 +1413,14 @@
 <!-- Notification bar -->
 <div class="notif-bar" id="notif-bar">✓ Progress saved</div>
 
-<!-- ===================== CHAT PANEL ===================== -->
-<!-- Floating toggle button -->
+<!-- Chat Toggle Button -->
 <button class="chat-toggle-btn" id="chat-toggle-btn" onclick="toggleChat()" title="Ask your EB-1A AI Assistant">
   <svg id="chat-icon-open" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
   <svg id="chat-icon-close" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="display:none"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
 </button>
 
-<!-- Side panel -->
+<!-- Chat Panel -->
 <div class="chat-panel" id="chat-panel">
-  <!-- Header -->
   <div class="chat-header">
     <div style="font-size:28px;line-height:1;">🎯</div>
     <div class="chat-header-info">
@@ -1435,37 +1432,32 @@
     </button>
   </div>
 
-  <!-- API-key setup screen -->
+  <!-- Setup screen -->
   <div class="chat-setup" id="chat-setup">
     <div class="chat-setup-icon">🔑</div>
     <div class="chat-setup-title">Connect your OpenAI key</div>
     <div class="chat-setup-desc">Your key is stored only in your browser and never sent anywhere except OpenAI.</div>
-    <input class="chat-setup-input" id="chat-api-key-input" type="password" placeholder="sk-..." autocomplete="off" onkeydown="if(event.key==='Enter')saveChatKey()">
-    <button class="chat-setup-btn" onclick="saveChatKey()">Save &amp; Start Chatting</button>
+    <input type="password" class="chat-setup-input" id="chat-api-key-input" placeholder="sk-..." autocomplete="off" onkeydown="if(event.key==='Enter')saveApiKey()">
+    <button class="chat-setup-btn" onclick="saveApiKey()">Save &amp; Start Chatting</button>
     <div class="chat-setup-note">Key is saved to localStorage. Clear it anytime with the link at the bottom of the chat.</div>
   </div>
 
   <!-- Chat interface -->
   <div class="chat-interface" id="chat-interface" style="display:none">
-    <!-- Quick-start suggestion chips -->
     <div class="chat-suggestions" id="chat-suggestions">
-      <button class="chat-suggestion" onclick="sendSuggestion(this)">📋 What should I do next?</button>
-      <button class="chat-suggestion" onclick="sendSuggestion(this)">💰 Explain my salary criterion</button>
-      <button class="chat-suggestion" onclick="sendSuggestion(this)">✍️ How do I get expert letters?</button>
-      <button class="chat-suggestion" onclick="sendSuggestion(this)">📊 How is my progress?</button>
+      <button class="chat-suggestion" onclick="useSuggestion('What should I do next?')">📋 What should I do next?</button>
+      <button class="chat-suggestion" onclick="useSuggestion('Explain my salary criterion')">💰 Explain my salary criterion</button>
+      <button class="chat-suggestion" onclick="useSuggestion('How do I get expert letters?')">✍️ How do I get expert letters?</button>
+      <button class="chat-suggestion" onclick="useSuggestion('How is my overall progress?')">📊 How is my progress?</button>
     </div>
-
-    <!-- Message thread -->
     <div class="chat-messages" id="chat-messages"></div>
-
-    <!-- Footer: input + attach -->
     <div class="chat-footer">
       <textarea class="chat-input" id="chat-input" placeholder="Ask anything about your EB-1A journey…" rows="1" onkeydown="chatKeydown(event)" oninput="autoResizeChatInput(this)"></textarea>
-      <button class="chat-send-btn" id="chat-send-btn" onclick="sendChat()" title="Send">
+      <button class="chat-send-btn" id="chat-send-btn" onclick="sendChatMessage()" title="Send">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
       </button>
     </div>
-    <div class="chat-key-reset" onclick="resetChatKey()">🔄 Reset API key</div>
+    <div class="chat-key-reset" onclick="resetApiKey()">🔄 Reset API key</div>
   </div>
 </div>
 
@@ -1750,7 +1742,7 @@ function handleUpload(event, docId) {
 // =================== CHAT ===================
 const CHAT_KEY_STORAGE = 'eb1a_openai_key';
 const CHAT_HISTORY_STORAGE = 'eb1a_chat_history';
-let chatMessages = []; // [{role, content}]
+let chatMessages = [];
 let chatOpen = false;
 
 function toggleChat() {
@@ -1759,29 +1751,20 @@ function toggleChat() {
   const iconOpen = document.getElementById('chat-icon-open');
   const iconClose = document.getElementById('chat-icon-close');
   panel.classList.toggle('open', chatOpen);
-  iconOpen.style.display = chatOpen ? 'none' : '';
-  iconClose.style.display = chatOpen ? '' : 'none';
-
-  if (chatOpen) {
-    const key = localStorage.getItem(CHAT_KEY_STORAGE);
-    if (key) {
-      showChatInterface();
-    }
-  }
+  if (iconOpen) iconOpen.style.display = chatOpen ? 'none' : '';
+  if (iconClose) iconClose.style.display = chatOpen ? '' : 'none';
+  if (chatOpen && localStorage.getItem(CHAT_KEY_STORAGE)) showChatInterface();
 }
 
-function saveChatKey() {
+function saveApiKey() {
   const input = document.getElementById('chat-api-key-input');
   const key = (input.value || '').trim();
-  if (!key.startsWith('sk-')) {
-    input.style.borderColor = 'var(--danger)';
-    return;
-  }
+  if (!key.startsWith('sk-')) { input.style.borderColor = 'var(--danger)'; return; }
   localStorage.setItem(CHAT_KEY_STORAGE, key);
   showChatInterface();
 }
 
-function resetChatKey() {
+function resetApiKey() {
   localStorage.removeItem(CHAT_KEY_STORAGE);
   localStorage.removeItem(CHAT_HISTORY_STORAGE);
   chatMessages = [];
@@ -1794,119 +1777,82 @@ function resetChatKey() {
 function showChatInterface() {
   document.getElementById('chat-setup').style.display = 'none';
   document.getElementById('chat-interface').style.display = '';
-  // Restore history
   try {
     const saved = localStorage.getItem(CHAT_HISTORY_STORAGE);
-    if (saved) {
+    if (saved && chatMessages.length === 0) {
       chatMessages = JSON.parse(saved);
-      const thread = document.getElementById('chat-messages');
-      chatMessages.forEach(m => {
-        if (m.role !== 'system') appendChatBubble(m.role, m.content, false);
-      });
-      if (chatMessages.length > 1) {
+      chatMessages.forEach(m => { if (m.role !== 'system') appendBubble(m.role, m.content, false); });
+      if (chatMessages.filter(m => m.role !== 'system').length > 0) {
         document.getElementById('chat-suggestions').style.display = 'none';
       }
     }
   } catch(e) {}
-  scrollChatToBottom();
+  scrollChat();
   document.getElementById('chat-input').focus();
 }
 
 function buildSystemPrompt() {
-  // Gather live progress state
   let criteriaProgress = [];
-  Object.entries(criteriaItems).forEach(([crit, items]) => {
-    const done = items.filter(id => state.checks[id]).length;
-    criteriaProgress.push(`${crit}: ${done}/${items.length} tasks done`);
-  });
-  const docsTotal = Object.values(docData).flatMap(g => g.items).length;
-  const docsUploaded = Object.keys(state.docs).length;
-
-  return `You are a knowledgeable EB-1A immigration assistant helping Karan Chandra, a Senior Data Scientist at Walmart Global Tech, through his EB-1A extraordinary ability green card journey.
-
-Current dashboard state:
-- Criteria progress: ${criteriaProgress.join(', ')}
-- Documents uploaded: ${docsUploaded}/${docsTotal}
-- Attorney step done: ${state.attorneyDone}
-- Target filing: Q4 2026
-
-Criteria Karan is pursuing:
-- Criterion #8: Distinguished role (lead data scientist, patent, publications)
-- Criterion #9: High salary (>90th percentile for data scientists)
-- Criterion #5: Original contributions (recommendation letters, patents, blog post)
-- Criterion #4: Judging (conference/journal reviewer)
-- Criterion #6: Publications (blog, arXiv)
-
-Give concise, actionable advice. When you reference a criterion, badge it like [Criterion #8]. For numbered steps, use ordered lists. Be encouraging but accurate. Keep responses under 300 words unless asked for detail.`;
+  if (typeof criteriaItems !== 'undefined') {
+    Object.entries(criteriaItems).forEach(([crit, items]) => {
+      const done = items.filter(id => state.checks[id]).length;
+      criteriaProgress.push(crit + ': ' + done + '/' + items.length + ' tasks done');
+    });
+  }
+  const docsUploaded = Object.keys(state.docs || {}).length;
+  return 'You are a knowledgeable EB-1A immigration assistant helping Karan Chandra, a Senior Data Scientist at Walmart Global Tech, through his EB-1A extraordinary ability green card journey targeting Q4 2026.\n\nCurrent progress: ' + criteriaProgress.join(', ') + '. Documents uploaded: ' + docsUploaded + '.\n\nCriteria being pursued: #8 Distinguished Role, #9 High Salary, #5 Original Contributions, #4 Judging, #6 Publications.\n\nGive concise, actionable advice under 250 words. Badge criteria as [Criterion #N]. Use numbered lists for steps.';
 }
 
-function buildCriterionBadge(content) {
-  return content.replace(/\[Criterion #(\d+)\]/g, '<span class="chat-action-tag">Criterion #$1</span>');
-}
-
-function appendChatBubble(role, content, animate) {
+function appendBubble(role, content, animate) {
   const thread = document.getElementById('chat-messages');
   const isUser = role === 'user';
   const wrap = document.createElement('div');
   wrap.className = 'chat-message' + (isUser ? ' user' : '');
-
   const avatar = document.createElement('div');
   avatar.className = 'chat-avatar ' + (isUser ? 'user-av' : 'ai');
   avatar.textContent = isUser ? '👤' : '🎯';
-
   const bubble = document.createElement('div');
   bubble.className = 'chat-bubble ' + (isUser ? 'user' : 'ai');
-
   if (isUser) {
     bubble.textContent = content;
   } else {
-    // Render simple markdown: bold, lists, line breaks, criterion badges
     let html = content
       .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
       .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
       .replace(/\[Criterion #(\d+)\]/g, '<span class="chat-action-tag">Criterion #$1</span>')
-      .replace(/^\d+\.\s+(.+)$/gm, '<li>$1</li>')
-      .replace(/(<li>.*<\/li>)/s, '<ol>$1</ol>')
       .replace(/\n/g, '<br>');
     bubble.innerHTML = html;
   }
-
   wrap.appendChild(avatar);
   wrap.appendChild(bubble);
   if (animate) {
-    wrap.style.opacity = '0';
-    wrap.style.transform = 'translateY(8px)';
-    wrap.style.transition = 'opacity 0.25s, transform 0.25s';
+    wrap.style.cssText = 'opacity:0;transform:translateY(8px);transition:opacity 0.25s,transform 0.25s';
     thread.appendChild(wrap);
-    requestAnimationFrame(() => {
-      wrap.style.opacity = '1';
-      wrap.style.transform = 'translateY(0)';
-    });
+    requestAnimationFrame(() => { wrap.style.opacity = '1'; wrap.style.transform = 'translateY(0)'; });
   } else {
     thread.appendChild(wrap);
   }
-  scrollChatToBottom();
+  scrollChat();
 }
 
-function appendTypingIndicator() {
+function scrollChat() {
+  const t = document.getElementById('chat-messages');
+  if (t) t.scrollTop = t.scrollHeight;
+}
+
+function showTyping() {
   const thread = document.getElementById('chat-messages');
   const wrap = document.createElement('div');
   wrap.className = 'chat-message';
   wrap.id = 'chat-typing-indicator';
   wrap.innerHTML = '<div class="chat-avatar ai">🎯</div><div class="chat-typing"><span></span><span></span><span></span></div>';
   thread.appendChild(wrap);
-  scrollChatToBottom();
-  return wrap;
+  scrollChat();
 }
 
-function scrollChatToBottom() {
-  const thread = document.getElementById('chat-messages');
-  thread.scrollTop = thread.scrollHeight;
-}
-
-async function sendChat() {
+async function sendChatMessage() {
   const input = document.getElementById('chat-input');
-  const text = input.value.trim();
+  const text = (input.value || '').trim();
   if (!text) return;
   const key = localStorage.getItem(CHAT_KEY_STORAGE);
   if (!key) return;
@@ -1916,69 +1862,48 @@ async function sendChat() {
   document.getElementById('chat-suggestions').style.display = 'none';
   document.getElementById('chat-send-btn').disabled = true;
 
-  appendChatBubble('user', text, true);
-  if (chatMessages.length === 0) {
-    chatMessages.push({ role: 'system', content: buildSystemPrompt() });
-  }
+  appendBubble('user', text, true);
+  if (chatMessages.length === 0) chatMessages.push({ role: 'system', content: buildSystemPrompt() });
   chatMessages.push({ role: 'user', content: text });
-
-  const typing = appendTypingIndicator();
+  showTyping();
 
   try {
     const resp = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + key
-      },
-      body: JSON.stringify({
-        model: 'gpt-4o-mini',
-        messages: chatMessages,
-        max_tokens: 600,
-        temperature: 0.7
-      })
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + key },
+      body: JSON.stringify({ model: 'gpt-4o-mini', messages: chatMessages, max_tokens: 500, temperature: 0.7 })
     });
-
-    typing.remove();
+    const indicator = document.getElementById('chat-typing-indicator');
+    if (indicator) indicator.remove();
 
     if (!resp.ok) {
       const err = await resp.json().catch(() => ({}));
-      const msg = err.error?.message || ('API error ' + resp.status);
-      appendChatBubble('assistant', '⚠️ ' + msg, true);
+      appendBubble('assistant', '⚠️ ' + (err.error?.message || 'API error ' + resp.status), true);
       return;
     }
-
     const data = await resp.json();
     const reply = data.choices?.[0]?.message?.content || '(no response)';
     chatMessages.push({ role: 'assistant', content: reply });
-
     try { localStorage.setItem(CHAT_HISTORY_STORAGE, JSON.stringify(chatMessages)); } catch(e) {}
-
-    appendChatBubble('assistant', reply, true);
-
-    // Toast if reply mentions criteria updates
-    if (/criterion/i.test(reply)) {
-      showNotif('💡 AI highlighted a criterion — check the response!');
-    }
+    appendBubble('assistant', reply, true);
+    if (/criterion/i.test(reply)) showNotif('💡 AI highlighted a criterion — check the response!');
   } catch(e) {
-    typing.remove();
-    appendChatBubble('assistant', '⚠️ Network error: ' + e.message, true);
+    const indicator = document.getElementById('chat-typing-indicator');
+    if (indicator) indicator.remove();
+    appendBubble('assistant', '⚠️ Network error: ' + e.message, true);
   } finally {
     document.getElementById('chat-send-btn').disabled = false;
     document.getElementById('chat-input').focus();
   }
 }
 
-function sendSuggestion(btn) {
-  document.getElementById('chat-input').value = btn.textContent.replace(/^[^\s]+\s/, '');
-  sendChat();
+function useSuggestion(text) {
+  document.getElementById('chat-input').value = text;
+  sendChatMessage();
 }
 
 function chatKeydown(e) {
-  if (e.key === 'Enter' && !e.shiftKey) {
-    e.preventDefault();
-    sendChat();
-  }
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChatMessage(); }
 }
 
 function autoResizeChatInput(el) {
