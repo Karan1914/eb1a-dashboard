@@ -1,0 +1,2007 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EB-1A Journey Dashboard — Karan Chandra</title>
+<style>
+  :root {
+    --primary: #2563eb;
+    --primary-light: #dbeafe;
+    --primary-dark: #1d4ed8;
+    --success: #16a34a;
+    --success-light: #dcfce7;
+    --warning: #d97706;
+    --warning-light: #fef3c7;
+    --danger: #dc2626;
+    --danger-light: #fee2e2;
+    --gray-50: #f9fafb;
+    --gray-100: #f3f4f6;
+    --gray-200: #e5e7eb;
+    --gray-300: #d1d5db;
+    --gray-400: #9ca3af;
+    --gray-500: #6b7280;
+    --gray-600: #4b5563;
+    --gray-700: #374151;
+    --gray-800: #1f2937;
+    --gray-900: #111827;
+    --border-radius: 12px;
+    --shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+    --shadow-md: 0 4px 6px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.06);
+    --shadow-lg: 0 10px 15px rgba(0,0,0,0.1), 0 4px 6px rgba(0,0,0,0.05);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--gray-50);
+    color: var(--gray-800);
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* Header */
+  .header {
+    background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 50%, #3b82f6 100%);
+    color: white;
+    padding: 32px 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    top: -50%; right: -10%;
+    width: 400px; height: 400px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 50%;
+  }
+  .header-inner { max-width: 1100px; margin: 0 auto; position: relative; }
+  .header h1 { font-size: 28px; font-weight: 700; margin-bottom: 4px; }
+  .header .subtitle { font-size: 15px; opacity: 0.85; margin-bottom: 24px; }
+  .header-meta { display: flex; gap: 24px; flex-wrap: wrap; }
+  .header-stat {
+    background: rgba(255,255,255,0.12);
+    border-radius: 10px;
+    padding: 10px 16px;
+    min-width: 120px;
+    backdrop-filter: blur(4px);
+  }
+  .header-stat .stat-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.8px; opacity: 0.75; }
+  .header-stat .stat-value { font-size: 22px; font-weight: 700; margin-top: 2px; }
+
+  /* Progress bar */
+  .progress-bar-wrap {
+    background: rgba(255,255,255,0.2);
+    border-radius: 99px;
+    height: 8px;
+    margin-top: 16px;
+    overflow: hidden;
+    max-width: 400px;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: #34d399;
+    border-radius: 99px;
+    transition: width 0.5s ease;
+  }
+
+  /* Nav */
+  .nav {
+    background: white;
+    border-bottom: 1px solid var(--gray-200);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: var(--shadow);
+  }
+  .nav-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+  }
+  .nav-tab {
+    padding: 14px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--gray-500);
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    white-space: nowrap;
+    transition: all 0.2s;
+    background: none;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    outline: none;
+  }
+  .nav-tab:hover { color: var(--primary); }
+  .nav-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+
+  /* Main content */
+  .main { max-width: 1100px; margin: 0 auto; padding: 24px; }
+  .tab-pane { display: none; }
+  .tab-pane.active { display: block; }
+
+  /* Cards */
+  .card {
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  .card-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--gray-800);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* Badge */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 10px;
+    border-radius: 99px;
+    font-size: 12px;
+    font-weight: 600;
+    gap: 4px;
+  }
+  .badge-green { background: var(--success-light); color: var(--success); }
+  .badge-yellow { background: var(--warning-light); color: var(--warning); }
+  .badge-blue { background: var(--primary-light); color: var(--primary); }
+  .badge-red { background: var(--danger-light); color: var(--danger); }
+  .badge-gray { background: var(--gray-100); color: var(--gray-600); }
+
+  /* Criterion Card */
+  .criterion-card {
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    margin-bottom: 16px;
+    overflow: hidden;
+    transition: box-shadow 0.2s;
+  }
+  .criterion-card:hover { box-shadow: var(--shadow-md); }
+  .criterion-header {
+    padding: 16px 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    user-select: none;
+  }
+  .criterion-number {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: var(--primary-light);
+    color: var(--primary);
+    font-weight: 700;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .criterion-number.complete { background: var(--success-light); color: var(--success); }
+  .criterion-info { flex: 1; }
+  .criterion-name { font-size: 15px; font-weight: 600; color: var(--gray-800); }
+  .criterion-meta { font-size: 13px; color: var(--gray-500); margin-top: 2px; }
+  .criterion-progress-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: auto;
+    flex-shrink: 0;
+  }
+  .mini-progress {
+    width: 80px;
+    height: 6px;
+    background: var(--gray-200);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .mini-progress-fill {
+    height: 100%;
+    background: var(--primary);
+    border-radius: 99px;
+    transition: width 0.4s ease;
+  }
+  .mini-progress-fill.complete { background: var(--success); }
+  .chevron {
+    color: var(--gray-400);
+    transition: transform 0.2s;
+    font-size: 18px;
+    margin-left: 8px;
+  }
+  .criterion-card.open .chevron { transform: rotate(180deg); }
+  .criterion-body {
+    display: none;
+    padding: 0 20px 20px;
+    border-top: 1px solid var(--gray-100);
+  }
+  .criterion-card.open .criterion-body { display: block; }
+
+  /* Checklist */
+  .checklist { list-style: none; margin-top: 12px; }
+  .checklist-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    margin-bottom: 4px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .checklist-item:hover { background: var(--gray-50); }
+  .checklist-item input[type="checkbox"] {
+    width: 17px; height: 17px;
+    border-radius: 4px;
+    cursor: pointer;
+    accent-color: var(--primary);
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .checklist-item label {
+    font-size: 14px;
+    color: var(--gray-700);
+    cursor: pointer;
+    line-height: 1.5;
+  }
+  .checklist-item.checked label {
+    text-decoration: line-through;
+    color: var(--gray-400);
+  }
+  .section-label {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--gray-400);
+    margin: 16px 0 6px;
+  }
+
+  /* Timeline */
+  .timeline { position: relative; }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 20px; top: 0; bottom: 0;
+    width: 2px;
+    background: var(--gray-200);
+  }
+  .timeline-item { display: flex; gap: 16px; margin-bottom: 20px; position: relative; }
+  .timeline-dot {
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    background: var(--primary-light);
+    color: var(--primary);
+    font-weight: 700;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border: 3px solid white;
+    box-shadow: 0 0 0 2px var(--primary-light);
+    position: relative;
+    z-index: 1;
+  }
+  .timeline-dot.active { background: var(--primary); color: white; box-shadow: 0 0 0 3px var(--primary-light); }
+  .timeline-dot.done { background: var(--success); color: white; box-shadow: 0 0 0 3px var(--success-light); }
+  .timeline-content {
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    padding: 14px 16px;
+    flex: 1;
+  }
+  .timeline-phase { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; color: var(--primary); margin-bottom: 4px; }
+  .timeline-title { font-size: 15px; font-weight: 600; color: var(--gray-800); }
+  .timeline-desc { font-size: 13px; color: var(--gray-500); margin-top: 4px; }
+
+  /* Grid layout */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 700px) { .grid-2 { grid-template-columns: 1fr; } }
+
+  /* Summary progress rings */
+  .criteria-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .criteria-thumb {
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    padding: 14px;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .criteria-thumb:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+  .criteria-thumb .ct-num { font-size: 22px; font-weight: 700; color: var(--primary); }
+  .criteria-thumb .ct-name { font-size: 12px; color: var(--gray-500); margin-top: 2px; line-height: 1.3; }
+  .criteria-thumb .ct-progress { margin-top: 10px; }
+  .criteria-thumb .ct-pct { font-size: 12px; font-weight: 600; color: var(--gray-600); margin-top: 4px; }
+  .criteria-thumb.status-strong .ct-num { color: var(--success); }
+  .criteria-thumb.status-none .ct-num { color: var(--gray-400); }
+
+  /* Document upload */
+  .doc-list { list-style: none; }
+  .doc-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    margin-bottom: 6px;
+    border: 1px solid var(--gray-200);
+    background: white;
+    transition: background 0.15s;
+  }
+  .doc-item:hover { background: var(--gray-50); }
+  .doc-icon { font-size: 20px; flex-shrink: 0; }
+  .doc-info { flex: 1; }
+  .doc-name { font-size: 14px; font-weight: 500; color: var(--gray-800); }
+  .doc-criterion { font-size: 12px; color: var(--gray-400); }
+  .doc-status { flex-shrink: 0; }
+  .upload-btn {
+    padding: 5px 12px;
+    font-size: 12px;
+    border-radius: 6px;
+    border: 1px solid var(--gray-300);
+    background: white;
+    cursor: pointer;
+    color: var(--gray-600);
+    transition: all 0.15s;
+  }
+  .upload-btn:hover { border-color: var(--primary); color: var(--primary); }
+  .uploaded-tag {
+    padding: 4px 10px;
+    font-size: 12px;
+    border-radius: 6px;
+    background: var(--success-light);
+    color: var(--success);
+    font-weight: 500;
+  }
+  .file-input { display: none; }
+
+  /* Quick wins */
+  .quickwin-list { list-style: none; }
+  .quickwin-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid var(--gray-200);
+    margin-bottom: 8px;
+    background: white;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .quickwin-item:hover { border-color: var(--primary); background: var(--primary-light); }
+  .quickwin-item.done { opacity: 0.5; background: var(--gray-50); }
+  .quickwin-item .qw-time { font-size: 11px; font-weight: 600; color: var(--warning); background: var(--warning-light); padding: 2px 8px; border-radius: 99px; white-space: nowrap; }
+  .quickwin-item .qw-text { font-size: 14px; color: var(--gray-700); flex: 1; }
+  .quickwin-item .qw-criterion { font-size: 11px; color: var(--primary); background: var(--primary-light); padding: 2px 8px; border-radius: 99px; white-space: nowrap; }
+
+  /* Reminder section */
+  .reminder-card {
+    background: linear-gradient(135deg, #eff6ff, #dbeafe);
+    border: 1px solid #bfdbfe;
+    border-radius: var(--border-radius);
+    padding: 16px;
+    margin-bottom: 16px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+  .reminder-icon { font-size: 24px; flex-shrink: 0; }
+  .reminder-title { font-size: 15px; font-weight: 600; color: var(--primary-dark); }
+  .reminder-desc { font-size: 13px; color: var(--gray-600); margin-top: 4px; }
+
+  /* Filing target */
+  .filing-target {
+    background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+    border: 1px solid #bbf7d0;
+    border-radius: var(--border-radius);
+    padding: 16px 20px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .ft-icon { font-size: 32px; }
+  .ft-label { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; color: var(--success); }
+  .ft-value { font-size: 20px; font-weight: 700; color: #15803d; }
+  .ft-sub { font-size: 13px; color: var(--gray-500); }
+
+  /* Resources */
+  .resource-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--gray-200);
+    margin-bottom: 8px;
+    background: white;
+    text-decoration: none;
+    color: var(--gray-700);
+    font-size: 14px;
+    transition: all 0.15s;
+  }
+  .resource-link:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
+  .resource-link .rl-icon { font-size: 18px; }
+  .resource-link .rl-name { font-weight: 500; flex: 1; }
+  .resource-link .rl-arrow { color: var(--gray-300); }
+  .resource-link:hover .rl-arrow { color: var(--primary); }
+
+  /* Notification bar */
+  .notif-bar {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: var(--gray-900);
+    color: white;
+    padding: 10px 18px;
+    border-radius: 10px;
+    font-size: 14px;
+    box-shadow: var(--shadow-lg);
+    display: none;
+    animation: slideIn 0.3s ease;
+    z-index: 999;
+  }
+  @keyframes slideIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+  /* Attorney CTA */
+  .cta-box {
+    background: linear-gradient(135deg, #1e3a8a, #2563eb);
+    color: white;
+    border-radius: var(--border-radius);
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+  .cta-box h3 { font-size: 17px; font-weight: 700; margin-bottom: 6px; }
+  .cta-box p { font-size: 13px; opacity: 0.85; margin-bottom: 14px; }
+  .cta-btn {
+    background: white;
+    color: var(--primary-dark);
+    border: none;
+    border-radius: 8px;
+    padding: 9px 18px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+  .cta-btn:hover { opacity: 0.9; }
+
+  /* Sections */
+  .section-header {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--gray-900);
+    margin-bottom: 4px;
+  }
+  .section-sub {
+    font-size: 14px;
+    color: var(--gray-500);
+    margin-bottom: 20px;
+  }
+  hr.divider { border: none; border-top: 1px solid var(--gray-200); margin: 20px 0; }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    .header { padding: 20px 16px; }
+    .header h1 { font-size: 22px; }
+    .main { padding: 16px; }
+    .nav-tab { padding: 12px 14px; font-size: 13px; }
+  }
+
+  /* ===== CHAT PANEL ===== */
+  .chat-toggle-btn {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #1e3a8a, #2563eb);
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 24px;
+    box-shadow: var(--shadow-lg);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .chat-toggle-btn:hover { transform: scale(1.08); box-shadow: 0 12px 24px rgba(37,99,235,0.4); }
+
+  .chat-panel {
+    position: fixed;
+    top: 0;
+    right: -420px;
+    width: 400px;
+    height: 100vh;
+    background: white;
+    box-shadow: -4px 0 24px rgba(0,0,0,0.15);
+    z-index: 1001;
+    display: flex;
+    flex-direction: column;
+    transition: right 0.3s ease;
+  }
+  .chat-panel.open { right: 0; }
+  @media (max-width: 480px) {
+    .chat-panel { width: 100vw; right: -100vw; }
+  }
+
+  .chat-header {
+    background: linear-gradient(135deg, #1e3a8a, #2563eb);
+    color: white;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+  }
+  .chat-header-info { flex: 1; }
+  .chat-header-title { font-size: 16px; font-weight: 700; }
+  .chat-header-sub { font-size: 11px; opacity: 0.8; margin-top: 2px; }
+  .chat-close-btn {
+    background: rgba(255,255,255,0.15);
+    border: none;
+    color: white;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s;
+    flex-shrink: 0;
+  }
+  .chat-close-btn:hover { background: rgba(255,255,255,0.25); }
+
+  .chat-setup {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 24px;
+    gap: 14px;
+    text-align: center;
+  }
+  .chat-setup-icon { font-size: 48px; }
+  .chat-setup-title { font-size: 18px; font-weight: 700; color: var(--gray-800); }
+  .chat-setup-desc { font-size: 13px; color: var(--gray-500); line-height: 1.6; }
+  .chat-setup-input {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid var(--gray-300);
+    border-radius: 8px;
+    font-size: 13px;
+    font-family: monospace;
+    color: var(--gray-700);
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .chat-setup-input:focus { border-color: var(--primary); }
+  .chat-setup-btn {
+    width: 100%;
+    padding: 11px;
+    background: linear-gradient(135deg, #1e3a8a, #2563eb);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+  .chat-setup-btn:hover { opacity: 0.9; }
+  .chat-setup-note { font-size: 11px; color: var(--gray-400); line-height: 1.5; }
+
+  .chat-interface {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .chat-suggestions {
+    padding: 10px 16px 4px;
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    flex-shrink: 0;
+  }
+  .chat-suggestion {
+    padding: 4px 10px;
+    font-size: 12px;
+    border: 1px solid var(--gray-300);
+    border-radius: 99px;
+    cursor: pointer;
+    color: var(--gray-600);
+    background: white;
+    white-space: nowrap;
+    transition: all 0.15s;
+  }
+  .chat-suggestion:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
+
+  .chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 12px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .chat-message { display: flex; gap: 8px; align-items: flex-start; }
+  .chat-message.user { flex-direction: row-reverse; }
+  .chat-avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    flex-shrink: 0;
+  }
+  .chat-avatar.ai { background: var(--primary-light); }
+  .chat-avatar.user-av { background: var(--gray-100); }
+
+  .chat-bubble {
+    max-width: 82%;
+    padding: 9px 13px;
+    border-radius: 12px;
+    font-size: 13px;
+    line-height: 1.55;
+  }
+  .chat-bubble.ai {
+    background: var(--gray-100);
+    color: var(--gray-800);
+    border-bottom-left-radius: 4px;
+  }
+  .chat-bubble.user {
+    background: linear-gradient(135deg, #1e3a8a, #2563eb);
+    color: white;
+    border-bottom-right-radius: 4px;
+  }
+  .chat-bubble ol, .chat-bubble ul { padding-left: 18px; margin: 6px 0; }
+  .chat-bubble li { margin-bottom: 4px; }
+  .chat-bubble a { color: var(--primary); }
+  .chat-bubble.user a { color: #bfdbfe; }
+  .chat-bubble strong { font-weight: 600; }
+  .chat-bubble p { margin: 4px 0; }
+
+  .chat-action-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: var(--success-light);
+    border: 1px solid #bbf7d0;
+    border-radius: 6px;
+    padding: 5px 10px;
+    font-size: 11px;
+    color: var(--success);
+    margin-top: 6px;
+    font-weight: 500;
+  }
+
+  .chat-typing {
+    display: flex;
+    gap: 4px;
+    padding: 10px 14px;
+    background: var(--gray-100);
+    border-radius: 12px;
+    border-bottom-left-radius: 4px;
+    width: fit-content;
+  }
+  .chat-typing span {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--gray-400);
+    animation: chatDot 1.4s infinite ease-in-out;
+  }
+  .chat-typing span:nth-child(2) { animation-delay: 0.2s; }
+  .chat-typing span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes chatDot { 0%,80%,100%{transform:scale(0.8);opacity:0.5} 40%{transform:scale(1.1);opacity:1} }
+
+  .chat-footer {
+    border-top: 1px solid var(--gray-200);
+    padding: 10px 16px;
+    display: flex;
+    gap: 8px;
+    align-items: flex-end;
+    flex-shrink: 0;
+  }
+  .chat-input {
+    flex: 1;
+    border: 1px solid var(--gray-300);
+    border-radius: 10px;
+    padding: 8px 12px;
+    font-size: 13px;
+    font-family: inherit;
+    resize: none;
+    outline: none;
+    max-height: 100px;
+    line-height: 1.5;
+    transition: border-color 0.15s;
+  }
+  .chat-input:focus { border-color: var(--primary); }
+  .chat-send-btn {
+    width: 34px; height: 34px;
+    border-radius: 8px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background 0.15s;
+  }
+  .chat-send-btn:hover { background: var(--primary-dark); }
+  .chat-send-btn:disabled { background: var(--gray-300); cursor: not-allowed; }
+
+  .chat-key-reset {
+    font-size: 11px;
+    color: var(--gray-400);
+    text-align: center;
+    padding: 2px 16px 6px;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .chat-key-reset:hover { color: var(--primary); text-decoration: underline; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-inner">
+    <h1>🎯 EB-1A Journey Dashboard</h1>
+    <div class="subtitle">Karan Chandra · Senior Data Scientist, Walmart Global Tech · Target: Q4 2026</div>
+    <div class="header-meta">
+      <div class="header-stat">
+        <div class="stat-label">Filing Target</div>
+        <div class="stat-value" id="stat-target">Q4 2026</div>
+      </div>
+      <div class="header-stat">
+        <div class="stat-label">Criteria Progress</div>
+        <div class="stat-value" id="stat-criteria">1 / 5</div>
+      </div>
+      <div class="header-stat">
+        <div class="stat-label">Tasks Done</div>
+        <div class="stat-value" id="stat-tasks">0%</div>
+      </div>
+      <div class="header-stat">
+        <div class="stat-label">Docs Uploaded</div>
+        <div class="stat-value" id="stat-docs">0 / 22</div>
+      </div>
+    </div>
+    <div style="margin-top:14px;">
+      <div style="font-size:12px;opacity:0.75;margin-bottom:6px;">Overall Progress</div>
+      <div class="progress-bar-wrap">
+        <div class="progress-bar-fill" id="overall-progress" style="width:5%"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- NAV -->
+<div class="nav">
+  <div class="nav-inner">
+    <button class="nav-tab active" onclick="showTab('overview')">📊 Overview</button>
+    <button class="nav-tab" onclick="showTab('action-plan')">✅ Action Plan</button>
+    <button class="nav-tab" onclick="showTab('documents')">📁 Documents</button>
+    <button class="nav-tab" onclick="showTab('timeline')">🗓 Timeline</button>
+    <button class="nav-tab" onclick="showTab('resources')">🔗 Resources</button>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- ===== OVERVIEW TAB ===== -->
+  <div class="tab-pane active" id="tab-overview">
+
+    <div class="cta-box">
+      <h3>🚨 First Priority: Engage an Immigration Attorney</h3>
+      <p>Before taking any other action, sign with an EB-1A specialist attorney. They will validate your strategy, provide document templates, and ensure evidence meets USCIS standards. This is the single most important step.</p>
+      <button class="cta-btn" onclick="markAttorneyDone()">✅ Mark as Done — Attorney Engaged</button>
+    </div>
+
+    <div class="filing-target">
+      <div class="ft-icon">🏁</div>
+      <div>
+        <div class="ft-label">Conservative Filing Target</div>
+        <div class="ft-value">Q4 2026</div>
+        <div class="ft-sub">6–9 months from April 2026 · Petition: USCIS I-140 EB-1A</div>
+      </div>
+    </div>
+
+    <h2 class="section-header">Your Quick Wins This Week</h2>
+    <p class="section-sub">Start here — highest ROI actions with minimal time investment</p>
+    <ul class="quickwin-list" id="quickwin-list">
+      <li class="quickwin-item" onclick="toggleQuickWin(this,'qw1')" data-id="qw1">
+        <input type="checkbox" style="width:17px;height:17px;accent-color:var(--primary);flex-shrink:0;margin-top:2px;" onclick="event.stopPropagation()">
+        <span class="qw-text">Collect pay stubs, offer letter, RSU grants</span>
+        <span class="qw-time">⏱ 2 hrs</span>
+        <span class="qw-criterion">Criterion #9</span>
+      </li>
+      <li class="quickwin-item" onclick="toggleQuickWin(this,'qw2')" data-id="qw2">
+        <input type="checkbox" style="width:17px;height:17px;accent-color:var(--primary);flex-shrink:0;margin-top:2px;" onclick="event.stopPropagation()">
+        <span class="qw-text">Pull Levels.fyi comp benchmarks for Senior DS at Walmart</span>
+        <span class="qw-time">⏱ 1 hr</span>
+        <span class="qw-criterion">Criterion #9</span>
+      </li>
+      <li class="quickwin-item" onclick="toggleQuickWin(this,'qw3')" data-id="qw3">
+        <input type="checkbox" style="width:17px;height:17px;accent-color:var(--primary);flex-shrink:0;margin-top:2px;" onclick="event.stopPropagation()">
+        <span class="qw-text">Write your role impact narrative (1 page: systems you own, scale, impact)</span>
+        <span class="qw-time">⏱ 2 hrs</span>
+        <span class="qw-criterion">Criterion #8</span>
+      </li>
+      <li class="quickwin-item" onclick="toggleQuickWin(this,'qw4')" data-id="qw4">
+        <input type="checkbox" style="width:17px;height:17px;accent-color:var(--primary);flex-shrink:0;margin-top:2px;" onclick="event.stopPropagation()">
+        <span class="qw-text">Choose your technical blog post topic (fraud detection / graph ML / LLM pipelines)</span>
+        <span class="qw-time">⏱ 1 hr</span>
+        <span class="qw-criterion">Criterion #5, #6</span>
+      </li>
+      <li class="quickwin-item" onclick="toggleQuickWin(this,'qw5')" data-id="qw5">
+        <input type="checkbox" style="width:17px;height:17px;accent-color:var(--primary);flex-shrink:0;margin-top:2px;" onclick="event.stopPropagation()">
+        <span class="qw-text">Identify 5 potential expert letter writers on LinkedIn (professors, senior engineers)</span>
+        <span class="qw-time">⏱ 1 hr</span>
+        <span class="qw-criterion">Criterion #5</span>
+      </li>
+    </ul>
+
+    <hr class="divider">
+
+    <h2 class="section-header">Criteria Status Overview</h2>
+    <p class="section-sub">Click any card to jump to that criterion's action steps</p>
+    <div class="criteria-grid" id="criteria-grid">
+      <div class="criteria-thumb status-strong" onclick="jumpToCriterion('c8')">
+        <div class="ct-num">#8</div>
+        <div class="ct-name">Distinguished Role</div>
+        <div class="ct-progress"><div class="mini-progress"><div class="mini-progress-fill complete" id="mini-c8" style="width:0%"></div></div></div>
+        <div class="ct-pct" id="pct-c8">0%</div>
+        <div style="margin-top:6px;"><span class="badge badge-green">✅ Already Strong</span></div>
+      </div>
+      <div class="criteria-thumb" onclick="jumpToCriterion('c9')">
+        <div class="ct-num">#9</div>
+        <div class="ct-name">High Salary</div>
+        <div class="ct-progress"><div class="mini-progress"><div class="mini-progress-fill" id="mini-c9" style="width:0%"></div></div></div>
+        <div class="ct-pct" id="pct-c9">0%</div>
+        <div style="margin-top:6px;"><span class="badge badge-yellow">Priority #1</span></div>
+      </div>
+      <div class="criteria-thumb" onclick="jumpToCriterion('c5')">
+        <div class="ct-num">#5</div>
+        <div class="ct-name">Original Contributions</div>
+        <div class="ct-progress"><div class="mini-progress"><div class="mini-progress-fill" id="mini-c5" style="width:0%"></div></div></div>
+        <div class="ct-pct" id="pct-c5">0%</div>
+        <div style="margin-top:6px;"><span class="badge badge-yellow">Priority #2</span></div>
+      </div>
+      <div class="criteria-thumb" onclick="jumpToCriterion('c4')">
+        <div class="ct-num">#4</div>
+        <div class="ct-name">Judging / Reviewing</div>
+        <div class="ct-progress"><div class="mini-progress"><div class="mini-progress-fill" id="mini-c4" style="width:0%"></div></div></div>
+        <div class="ct-pct" id="pct-c4">0%</div>
+        <div style="margin-top:6px;"><span class="badge badge-blue">Priority #3</span></div>
+      </div>
+      <div class="criteria-thumb" onclick="jumpToCriterion('c6')">
+        <div class="ct-num">#6</div>
+        <div class="ct-name">Publications</div>
+        <div class="ct-progress"><div class="mini-progress"><div class="mini-progress-fill" id="mini-c6" style="width:0%"></div></div></div>
+        <div class="ct-pct" id="pct-c6">0%</div>
+        <div style="margin-top:6px;"><span class="badge badge-blue">Priority #4</span></div>
+      </div>
+      <div class="criteria-thumb status-none" onclick="jumpToCriterion('c3')">
+        <div class="ct-num">#3</div>
+        <div class="ct-name">Press / Media</div>
+        <div class="ct-progress"><div class="mini-progress"><div class="mini-progress-fill" id="mini-c3" style="width:0%"></div></div></div>
+        <div class="ct-pct" id="pct-c3">0%</div>
+        <div style="margin-top:6px;"><span class="badge badge-gray">Priority #5</span></div>
+      </div>
+      <div class="criteria-thumb status-none" onclick="jumpToCriterion('c2')">
+        <div class="ct-num">#2</div>
+        <div class="ct-name">Elite Memberships</div>
+        <div class="ct-progress"><div class="mini-progress"><div class="mini-progress-fill" id="mini-c2" style="width:0%"></div></div></div>
+        <div class="ct-pct" id="pct-c2">0%</div>
+        <div style="margin-top:6px;"><span class="badge badge-gray">Priority #6</span></div>
+      </div>
+    </div>
+
+    <div class="reminder-card">
+      <div class="reminder-icon">💡</div>
+      <div>
+        <div class="reminder-title">You Only Need 3 Criteria — But Aim for 5</div>
+        <div class="reminder-desc">USCIS requires meeting just 3 of the 10 criteria. With #8 (Distinguished Role) already strong and #9 (Salary) nearly confirmed, you need just one more criterion to file. Building toward 4–5 creates a much stronger petition and reduces RFE risk.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ===== ACTION PLAN TAB ===== -->
+  <div class="tab-pane" id="tab-action-plan">
+
+    <h2 class="section-header">EB-1A Action Plan</h2>
+    <p class="section-sub">Check off each action as you complete it. Progress is saved automatically.</p>
+
+    <!-- CRITERION #8 -->
+    <div class="criterion-card" id="card-c8">
+      <div class="criterion-header" onclick="toggleCriterion('c8')">
+        <div class="criterion-number complete" id="num-c8">#8</div>
+        <div class="criterion-info">
+          <div class="criterion-name">Critical Role in a Distinguished Organization</div>
+          <div class="criterion-meta">Walmart (#1 Fortune 500) · Fraud ML Lifecycle Owner · Status: Already Strong ✅</div>
+        </div>
+        <div class="criterion-progress-wrap">
+          <span class="badge badge-green">Already Strong ✅</span>
+          <div class="mini-progress"><div class="mini-progress-fill complete" id="prog-c8" style="width:0%"></div></div>
+          <span style="font-size:12px;color:var(--gray-500);width:32px;text-align:right;" id="pct2-c8">0%</span>
+        </div>
+        <span class="chevron">▾</span>
+      </div>
+      <div class="criterion-body" id="body-c8">
+        <div class="section-label">Action Steps</div>
+        <ul class="checklist" id="cl-c8-actions">
+          <li class="checklist-item" onclick="toggleCheck(this,'c8-a1')"><input type="checkbox" id="c8-a1" onclick="event.stopPropagation()"><label for="c8-a1">Write 1-page role impact narrative (systems owned, scale: 135K+ sellers, $2M+ GMV protected, impact)</label></li>
+          <li class="checklist-item" onclick="toggleCheck(this,'c8-a2')"><input type="checkbox" id="c8-a2" onclick="event.stopPropagation()"><label for="c8-a2">Collect org chart excerpt from HR showing your position</label></li>
+          <li class="checklist-item" onclick="toggleCheck(this,'c8-a3')"><input type="checkbox" id="c8-a3" onclick="event.stopPropagation()"><label for="c8-a3">Gather internal recognition artifacts (performance reviews, All-Hands mentions, Slack announcements)</label></li>
+          <li class="checklist-item" onclick="toggleCheck(this,'c8-a4')"><input type="checkbox" id="c8-a4" onclick="event.stopPropagation()"><label for="c8-a4">Quantify impact in bullet points: exact GMV numbers, seller count, runtime reductions (confirm with manager)</label></li>
+          <li class="checklist-item" onclick="toggleCheck(this,'c8-a5')"><input type="checkbox" id="c8-a5" onclick="event.stopPropagation()"><label for="c8-a5">Request employer support letter from Manager or VP on Walmart letterhead</label></li>
+        </ul>
+        <div class="section-label">USCIS Documentation Checklist</div>
+        <ul class="checklist" id="cl-c8-docs">
+          <li class="checklist-item" onclick="toggleCheck(this,'c8-d1')"><input type="checkbox" id="c8-d1" onclick="event.stopPropagation()"><label for="c8-d1">Employment verification letter from HR</label></li>
+          <li class="checklist-item" onclick="toggleCheck(this,'c8-d2')"><input type="checkbox" id="c8-d2" onclick="event.stopPropagation()"><label for="c8-d2">Org chart showing your position</label></li>
+          <li class="checklist-item" onclick="toggleCheck(this,'c8-d3')"><input type="checkbox" id="c8-d3" onclick="event.stopPropagation()"><label for="c8-d3">Employer support letter (Manager or VP level)</label></li>
+          <li class="checklist-item" onclick="toggleCheck(this,'c8-d4')"><input type="checkbox" id="c8-d4" onclick="event.stopPropagation()"><label for="c8-d4">Role impact narrative (self-authored, describing scope and scale)</label></li>
+          <li class="checklist-item" onclick="toggleCheck(this,'c8-d5')"><input type="checkbox" id="c8-d5" onclick="event.stopPropagation()"><label for="c8-d5">Performance reviews or internal recognition artifacts</label></li>
+          <li class="checklist-item" onclick="toggleCheck(this,'c8-d6')"><input type="checkbox" id="c8-d6" onclick="event.stopPropagation()"><label for="c8-d6">LinkedIn profile printout</label></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- CRITERION #9 -->
+    <div class="criterion-card" id="card-c9">
+      <div class="criterion-header" onclick="toggleCriterion('c9')">
+        <div class="criterion-number" id="num-c9">#9</div>
+        <div class="criterion-info">
+          <div class="criterion-name">High Salary Relative to Peers</div>
+          <div class="criterion-meta">Bay Area Senior DS total comp: $220K–$380K+ · Priority #1 · Estimated 2 weeks</div>
+        </div>
+        <div class="criterion-progress-wrap">
+          <span class="badge badge-yellow">Priority #1</span>
+          <div class="mini-progress"><div class="mini-progress-fill" id="prog-c9" style="width:0%"></div></div>
+          <span style="font-size:12px;color:var(--gray-500);width:32px;text-align:right;" id="pct2-c9">0%</span>
+        </div>
+        <span class="chevron">▾</span>
+      </div>
+      <div class="criterion-body" id="body-c9">
+        <div class="section-label">Action Steps</div>
+        <ul class="checklist" id="cl-c9-actions">
+          <li class="checklist-item" onclick="toggleCheck(this,'c9-a1')"><input type="checkbox" id="c9-a1" onclick="event.stopPropagation()"><label for="c9-a1">Collect most recent pay stubs (2–3 months), offer/comp letter, RSU grant letters, W-2</label></li>
+          <li class="checklist-item" onclick="toggleCheck(this,'c9-a2')"><input type="checkbox" id="c9-a2" onclick="event.stopPropagation()"><label for="c9-a2">Screenshot Levels.fyi for "Senior Data Scientist Walmart" and "Senior DS Bay Area" (save as PDF)</label></li>
+          <li class="checklist-item" onclick="toggleCheck(this,'c9-a3')"><input type="checkbox" id="c9-a3" onclick="event.stopPropagation()"><label for="c9-a3">Pull BLS Occupational Employment Statistics for code 15-2051 (Data Scientists) in your region</label></li>
+          <li class="checklist-item" onclick="toggleCheck(this,'c9-a4')"><input type="checkbox" id="c9-a4" onclick="event.stopPropagation()"><label for="c9-a4">Check H-1B LCA database (h1bdata.info) for comparable roles</label></li>
+          <li class="checklist-item" onclick="toggleCheck(this,'c9-a5')"><input type="checkbox" id="c9-a5" onclick="event.stopPropagation()"><label for="c9-a5">Compile 1-page compensation comparison table (your comp vs. median from 2–3 sources)</label></li>
+        </ul>
+        <div class="section-label">USCIS Documentation Checklist</div>
+        <ul class="checklist" id="cl-c9-docs">
+          <li class="checklist-item" onclick="toggleCheck(this,'c9-d1')"><input type="checkbox" id="c9-d1" onclick="event.stopPropagation()"><label for="c9-d1">Pay stubs (most recent 2–3 months)</label></li>
+          <li class="checklist-item" onclick="toggleCheck(this,'c9-d2')"><input type="checkbox" id="c9-d2" onclick="event.stopPropagation()"><label for="c9-d2">Most recent offer letter or compensation letter</label></li>
+          <li class="checklist-item" onclick="toggleCheck(this,'c9-d3')"><input type="checkbox" id="c9-d3" onclick="event.stopPropagation()"><label for="c9-d3">RSU / equity grant letters</label></li>
+          <li class="checklist-item" onclick="toggleCheck(this,'c9-d4')"><input type="checkbox" id="c9-d4" onclick="event.stopPropagation()"><label for="c9-d4">Most recent W-2</label></li>
+          <li class="checklist-item" onclick="toggleCheck(this,'c9-d5')"><input type="checkbox" id="c9-d5" onclick="event.stopPropagation()"><label for="c9-d5">Levels.fyi screenshots (PDF) for comparable roles</label></li>
+          <li class="checklist-item" onclick="toggleCheck(this,'c9-d6')"><input type="checkbox" id="c9-d6" onclick="event.stopPropagation()"><label for="c9-d6">BLS wage data printout for occupation code 15-2051</label></li>
+          <li class="checklist-item" onclick="toggleCheck(this,'c9-d7')"><input type="checkbox" id="c9-d7" onclick="event.stopPropagation()"><label for="c9-d7">1-page comp comparison narrative (attorney will help finalize)</label></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- CRITERION #5 -->
+    <div class="criterion-card" id="card-c5">
+      <div class="criterion-header" onclick="toggleCriterion('c5')">
+        <div class="criterion-number" id="num-c5">#5</div>
+        <div class="criterion-info">
+          <div class="criterion-name">Original Contributions of Major Significance</div>
+          <div class="criterion-meta">Fraud ML model, graph entity resolution · Priority #2 · 1–4 months</div>
+        </div>
+        <div class="criterion-progress-wrap">
+          <span class="badge badge-yellow">Priority #2</span>
+          <div class="mini-progress"><div class="mini-progress-fill" id="prog-c5" style="width:0%"></div></div>
+          <span style="font-size:12px;color:var(--gray-500);width:32px;text-align:right;" id="pct2-c5">0%</span>
+        </div>
+        <span class="chevron">▾</span>
+      </div>
+      <div class="criterion-body" id="body-c5">
+        <div class="section-label">Step A: Expert Recommendation Letters (Weeks 3–8)</div>
+        <ul class="checklist">
+          <li class="checklist-item" onclick="toggleCheck(this,'c5-a1')"><input type="checkbox" id="c5-a1" onclick="event.stopPropagation()"><label for="c5-a1">Identify 5 potential letter writers (ML/DS professors, Principal/Staff engineers at peer companies)</label></li>
+          <li class="checklist-item" onclick="toggleCheck(this,'c5-a2')"><input type="checkbox" id="c5-a2" onclick="event.stopPropagation()"><label for="c5-a2">Prepare "petitioner's package" for each writer (1-page bio + 2-page technical description + draft template)</label></li>
+          <li class="checklist-item" onclick="toggleCheck(this,'c5-a3')"><input type="checkbox" id="c5-a3" onclick="event.stopPropagation()"><label for="c5-a3">Send letter requests to all 5 targets (cold outreach is acceptable)</label></li>
+          <li class="checklist-item" onclick="toggleCheck(this,'c5-a4')"><input type="checkbox" id="c5-a4" onclick="event.stopPropagation()"><label for="c5-a4">Follow up and collect at least 3 signed letters on letterhead</label></li>
+        </ul>
+        <div class="section-label">Step B: Technical Blog Post (Weeks 2–4)</div>
+        <ul class="checklist">
+          <li class="checklist-item" onclick="toggleCheck(this,'c5-b1')"><input type="checkbox" id="c5-b1" onclick="event.stopPropagation()"><label for="c5-b1">Choose blog post angle (Fraud Detection at Walmart Scale / Graph Entity Resolution / LLM Pipelines)</label></li>
+          <li class="checklist-item" onclick="toggleCheck(this,'c5-b2')"><input type="checkbox" id="c5-b2" onclick="event.stopPropagation()"><label for="c5-b2">Write the post (8–12 hrs) — no confidential data; focus on methodology and anonymized metrics</label></li>
+          <li class="checklist-item" onclick="toggleCheck(this,'c5-b3')"><input type="checkbox" id="c5-b3" onclick="event.stopPropagation()"><label for="c5-b3">Submit to Walmart Tech Blog (start internal approval process early)</label></li>
+          <li class="checklist-item" onclick="toggleCheck(this,'c5-b4')"><input type="checkbox" id="c5-b4" onclick="event.stopPropagation()"><label for="c5-b4">Publish on Towards Data Science (backup: Walmart Tech Blog, arXiv, The Gradient)</label></li>
+          <li class="checklist-item" onclick="toggleCheck(this,'c5-b5')"><input type="checkbox" id="c5-b5" onclick="event.stopPropagation()"><label for="c5-b5">Track engagement: save publication URL, view count, platform stats</label></li>
+        </ul>
+        <div class="section-label">Step C: Provisional Patent (Month 2–3)</div>
+        <ul class="checklist">
+          <li class="checklist-item" onclick="toggleCheck(this,'c5-c1')"><input type="checkbox" id="c5-c1" onclick="event.stopPropagation()"><label for="c5-c1">Review Walmart IP assignment clause in your employment agreement</label></li>
+          <li class="checklist-item" onclick="toggleCheck(this,'c5-c2')"><input type="checkbox" id="c5-c2" onclick="event.stopPropagation()"><label for="c5-c2">Identify patentable invention (graph entity resolution algo / fraud detection pipeline architecture)</label></li>
+          <li class="checklist-item" onclick="toggleCheck(this,'c5-c3')"><input type="checkbox" id="c5-c3" onclick="event.stopPropagation()"><label for="c5-c3">File provisional patent with IP attorney (~$2,000–$5,000)</label></li>
+        </ul>
+        <div class="section-label">USCIS Documentation Checklist</div>
+        <ul class="checklist">
+          <li class="checklist-item" onclick="toggleCheck(this,'c5-d1')"><input type="checkbox" id="c5-d1" onclick="event.stopPropagation()"><label for="c5-d1">3–5 expert recommendation letters (on letterhead, signed)</label></li>
+          <li class="checklist-item" onclick="toggleCheck(this,'c5-d2')"><input type="checkbox" id="c5-d2" onclick="event.stopPropagation()"><label for="c5-d2">Published technical blog post (URL, publication date, platform stats)</label></li>
+          <li class="checklist-item" onclick="toggleCheck(this,'c5-d3')"><input type="checkbox" id="c5-d3" onclick="event.stopPropagation()"><label for="c5-d3">Patent application filing receipt (USPTO confirmation)</label></li>
+          <li class="checklist-item" onclick="toggleCheck(this,'c5-d4')"><input type="checkbox" id="c5-d4" onclick="event.stopPropagation()"><label for="c5-d4">Evidence of work metrics and scale (internal HR or manager verification)</label></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- CRITERION #4 -->
+    <div class="criterion-card" id="card-c4">
+      <div class="criterion-header" onclick="toggleCriterion('c4')">
+        <div class="criterion-number" id="num-c4">#4</div>
+        <div class="criterion-info">
+          <div class="criterion-name">Judging the Work of Others</div>
+          <div class="criterion-meta">Conference peer review, competition judging · Priority #3 · 2–6 months</div>
+        </div>
+        <div class="criterion-progress-wrap">
+          <span class="badge badge-blue">Priority #3</span>
+          <div class="mini-progress"><div class="mini-progress-fill" id="prog-c4" style="width:0%"></div></div>
+          <span style="font-size:12px;color:var(--gray-500);width:32px;text-align:right;" id="pct2-c4">0%</span>
+        </div>
+        <span class="chevron">▾</span>
+      </div>
+      <div class="criterion-body" id="body-c4">
+        <div class="section-label">Conference Peer Review (Month 1)</div>
+        <ul class="checklist">
+          <li class="checklist-item" onclick="toggleCheck(this,'c4-a1')"><input type="checkbox" id="c4-a1" onclick="event.stopPropagation()"><label for="c4-a1">Apply for NeurIPS 2026 reviewer — neuripscf.org → create reviewer profile (opens April–May)</label></li>
+          <li class="checklist-item" onclick="toggleCheck(this,'c4-a2')"><input type="checkbox" id="c4-a2" onclick="event.stopPropagation()"><label for="c4-a2">Apply for ICDM 2026 reviewer — icdm.cs.kent.edu (signup typically April–May)</label></li>
+          <li class="checklist-item" onclick="toggleCheck(this,'c4-a3')"><input type="checkbox" id="c4-a3" onclick="event.stopPropagation()"><label for="c4-a3">Apply for KDD 2026 research track reviewer</label></li>
+          <li class="checklist-item" onclick="toggleCheck(this,'c4-a4')"><input type="checkbox" id="c4-a4" onclick="event.stopPropagation()"><label for="c4-a4">Apply for AAAI 2027 reviewer (opens ~June 2026)</label></li>
+        </ul>
+        <div class="section-label">Competition & Hackathon Judging (Month 1–3)</div>
+        <ul class="checklist">
+          <li class="checklist-item" onclick="toggleCheck(this,'c4-b1')"><input type="checkbox" id="c4-b1" onclick="event.stopPropagation()"><label for="c4-b1">Email DrivenData.org to express interest in judging (competitions@drivendata.org)</label></li>
+          <li class="checklist-item" onclick="toggleCheck(this,'c4-b2')"><input type="checkbox" id="c4-b2" onclick="event.stopPropagation()"><label for="c4-b2">Apply as MLH hackathon judge — mlh.io/judges</label></li>
+          <li class="checklist-item" onclick="toggleCheck(this,'c4-b3')"><input type="checkbox" id="c4-b3" onclick="event.stopPropagation()"><label for="c4-b3">Track all evidence: acceptance emails, review assignments, event programs</label></li>
+        </ul>
+        <div class="section-label">USCIS Documentation Checklist</div>
+        <ul class="checklist">
+          <li class="checklist-item" onclick="toggleCheck(this,'c4-d1')"><input type="checkbox" id="c4-d1" onclick="event.stopPropagation()"><label for="c4-d1">Acceptance email from conference review committee</label></li>
+          <li class="checklist-item" onclick="toggleCheck(this,'c4-d2')"><input type="checkbox" id="c4-d2" onclick="event.stopPropagation()"><label for="c4-d2">Reviewer profile screenshot from conference submission system</label></li>
+          <li class="checklist-item" onclick="toggleCheck(this,'c4-d3')"><input type="checkbox" id="c4-d3" onclick="event.stopPropagation()"><label for="c4-d3">List of papers/projects assigned to you</label></li>
+          <li class="checklist-item" onclick="toggleCheck(this,'c4-d4')"><input type="checkbox" id="c4-d4" onclick="event.stopPropagation()"><label for="c4-d4">Event program or committee page listing you as reviewer/judge</label></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- CRITERION #6 -->
+    <div class="criterion-card" id="card-c6">
+      <div class="criterion-header" onclick="toggleCriterion('c6')">
+        <div class="criterion-number" id="num-c6">#6</div>
+        <div class="criterion-info">
+          <div class="criterion-name">Scholarly Articles / Technical Publications</div>
+          <div class="criterion-meta">Blog post + arXiv preprint + workshop paper · Priority #4 · 2–9 months</div>
+        </div>
+        <div class="criterion-progress-wrap">
+          <span class="badge badge-blue">Priority #4</span>
+          <div class="mini-progress"><div class="mini-progress-fill" id="prog-c6" style="width:0%"></div></div>
+          <span style="font-size:12px;color:var(--gray-500);width:32px;text-align:right;" id="pct2-c6">0%</span>
+        </div>
+        <span class="chevron">▾</span>
+      </div>
+      <div class="criterion-body" id="body-c6">
+        <div class="section-label">Action Steps</div>
+        <ul class="checklist">
+          <li class="checklist-item" onclick="toggleCheck(this,'c6-a1')"><input type="checkbox" id="c6-a1" onclick="event.stopPropagation()"><label for="c6-a1">Publish technical blog post (same as Criterion #5, Step B — overlapping work)</label></li>
+          <li class="checklist-item" onclick="toggleCheck(this,'c6-a2')"><input type="checkbox" id="c6-a2" onclick="event.stopPropagation()"><label for="c6-a2">Write arXiv preprint (6–10 pages) — submit to cs.LG or cs.IR or stat.ML</label></li>
+          <li class="checklist-item" onclick="toggleCheck(this,'c6-a3')"><input type="checkbox" id="c6-a3" onclick="event.stopPropagation()"><label for="c6-a3">Create Google Scholar profile linked to your name</label></li>
+          <li class="checklist-item" onclick="toggleCheck(this,'c6-a4')"><input type="checkbox" id="c6-a4" onclick="event.stopPropagation()"><label for="c6-a4">Submit to NeurIPS/ICML 2026 workshop (Graph Learning, Fraud Detection, Trustworthy ML)</label></li>
+        </ul>
+        <div class="section-label">USCIS Documentation Checklist</div>
+        <ul class="checklist">
+          <li class="checklist-item" onclick="toggleCheck(this,'c6-d1')"><input type="checkbox" id="c6-d1" onclick="event.stopPropagation()"><label for="c6-d1">Published blog post (URL, platform readership stats)</label></li>
+          <li class="checklist-item" onclick="toggleCheck(this,'c6-d2')"><input type="checkbox" id="c6-d2" onclick="event.stopPropagation()"><label for="c6-d2">arXiv preprint (arXiv ID, abstract, submission confirmation email)</label></li>
+          <li class="checklist-item" onclick="toggleCheck(this,'c6-d3')"><input type="checkbox" id="c6-d3" onclick="event.stopPropagation()"><label for="c6-d3">Workshop paper acceptance letter (if pursued)</label></li>
+          <li class="checklist-item" onclick="toggleCheck(this,'c6-d4')"><input type="checkbox" id="c6-d4" onclick="event.stopPropagation()"><label for="c6-d4">Google Scholar profile showing publications</label></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- CRITERION #3 -->
+    <div class="criterion-card" id="card-c3">
+      <div class="criterion-header" onclick="toggleCriterion('c3')">
+        <div class="criterion-number" id="num-c3">#3</div>
+        <div class="criterion-info">
+          <div class="criterion-name">Press / Media Coverage</div>
+          <div class="criterion-meta">Trade publications, podcasts, Walmart PR · Priority #5 · 3–9 months</div>
+        </div>
+        <div class="criterion-progress-wrap">
+          <span class="badge badge-gray">Priority #5</span>
+          <div class="mini-progress"><div class="mini-progress-fill" id="prog-c3" style="width:0%"></div></div>
+          <span style="font-size:12px;color:var(--gray-500);width:32px;text-align:right;" id="pct2-c3">0%</span>
+        </div>
+        <span class="chevron">▾</span>
+      </div>
+      <div class="criterion-body" id="body-c3">
+        <div class="section-label">Action Steps</div>
+        <ul class="checklist">
+          <li class="checklist-item" onclick="toggleCheck(this,'c3-a1')"><input type="checkbox" id="c3-a1" onclick="event.stopPropagation()"><label for="c3-a1">Leverage Walmart Tech Blog post: pitch to The Batch (deeplearning.ai), Import AI newsletter</label></li>
+          <li class="checklist-item" onclick="toggleCheck(this,'c3-a2')"><input type="checkbox" id="c3-a2" onclick="event.stopPropagation()"><label for="c3-a2">Pitch VentureBeat AI: "How Walmart uses graph ML to protect 135K+ sellers from fraud"</label></li>
+          <li class="checklist-item" onclick="toggleCheck(this,'c3-a3')"><input type="checkbox" id="c3-a3" onclick="event.stopPropagation()"><label for="c3-a3">Pitch InfoQ article (technical audience, ML engineering)</label></li>
+          <li class="checklist-item" onclick="toggleCheck(this,'c3-a4')"><input type="checkbox" id="c3-a4" onclick="event.stopPropagation()"><label for="c3-a4">Apply to ML podcast as expert guest: Practical AI, DataFramed, TWIML AI, Super Data Science</label></li>
+          <li class="checklist-item" onclick="toggleCheck(this,'c3-a5')"><input type="checkbox" id="c3-a5" onclick="event.stopPropagation()"><label for="c3-a5">Coordinate with Walmart PR for co-authored press release about fraud prevention work</label></li>
+        </ul>
+        <div class="section-label">USCIS Documentation Checklist</div>
+        <ul class="checklist">
+          <li class="checklist-item" onclick="toggleCheck(this,'c3-d1')"><input type="checkbox" id="c3-d1" onclick="event.stopPropagation()"><label for="c3-d1">Published articles with your name as the subject (URL, publication, date)</label></li>
+          <li class="checklist-item" onclick="toggleCheck(this,'c3-d2')"><input type="checkbox" id="c3-d2" onclick="event.stopPropagation()"><label for="c3-d2">Podcast episode with you as expert guest (episode URL, show stats)</label></li>
+          <li class="checklist-item" onclick="toggleCheck(this,'c3-d3')"><input type="checkbox" id="c3-d3" onclick="event.stopPropagation()"><label for="c3-d3">Screenshots showing publication reach/audience size</label></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- CRITERION #2 -->
+    <div class="criterion-card" id="card-c2">
+      <div class="criterion-header" onclick="toggleCriterion('c2')">
+        <div class="criterion-number" id="num-c2">#2</div>
+        <div class="criterion-info">
+          <div class="criterion-name">Elite Association Membership</div>
+          <div class="criterion-meta">ACM Senior Member, IEEE Senior Member · Priority #6 · 3–9 months</div>
+        </div>
+        <div class="criterion-progress-wrap">
+          <span class="badge badge-gray">Priority #6</span>
+          <div class="mini-progress"><div class="mini-progress-fill" id="prog-c2" style="width:0%"></div></div>
+          <span style="font-size:12px;color:var(--gray-500);width:32px;text-align:right;" id="pct2-c2">0%</span>
+        </div>
+        <span class="chevron">▾</span>
+      </div>
+      <div class="criterion-body" id="body-c2">
+        <div class="section-label">Action Steps</div>
+        <ul class="checklist">
+          <li class="checklist-item" onclick="toggleCheck(this,'c2-a1')"><input type="checkbox" id="c2-a1" onclick="event.stopPropagation()"><label for="c2-a1">Apply for ACM Senior Member — acm.org/membership/senior-member (need 10+ yrs experience + 3 endorsers)</label></li>
+          <li class="checklist-item" onclick="toggleCheck(this,'c2-a2')"><input type="checkbox" id="c2-a2" onclick="event.stopPropagation()"><label for="c2-a2">Apply for IEEE Senior Member — ieeeusa.org/careers/senior-member (need 5 references, 3 IEEE Senior/Fellow)</label></li>
+          <li class="checklist-item" onclick="toggleCheck(this,'c2-a3')"><input type="checkbox" id="c2-a3" onclick="event.stopPropagation()"><label for="c2-a3">After first review role, express interest in NeurIPS/ICML Program Committee membership</label></li>
+        </ul>
+        <div class="section-label">USCIS Documentation Checklist</div>
+        <ul class="checklist">
+          <li class="checklist-item" onclick="toggleCheck(this,'c2-d1')"><input type="checkbox" id="c2-d1" onclick="event.stopPropagation()"><label for="c2-d1">ACM Senior Member approval letter</label></li>
+          <li class="checklist-item" onclick="toggleCheck(this,'c2-d2')"><input type="checkbox" id="c2-d2" onclick="event.stopPropagation()"><label for="c2-d2">IEEE Senior Member approval letter</label></li>
+          <li class="checklist-item" onclick="toggleCheck(this,'c2-d3')"><input type="checkbox" id="c2-d3" onclick="event.stopPropagation()"><label for="c2-d3">Program Committee invitation letter (if pursued)</label></li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ===== DOCUMENTS TAB ===== -->
+  <div class="tab-pane" id="tab-documents">
+
+    <h2 class="section-header">Document Tracker</h2>
+    <p class="section-sub">Upload and track all required USCIS evidence documents. Files are stored locally in your browser.</p>
+
+    <div class="card">
+      <div class="card-title">📊 Document Status</div>
+      <div style="display:flex;gap:16px;flex-wrap:wrap;">
+        <div style="text-align:center;padding:12px 20px;background:var(--success-light);border-radius:10px;">
+          <div style="font-size:24px;font-weight:700;color:var(--success);" id="docs-uploaded-count">0</div>
+          <div style="font-size:12px;color:var(--success);">Uploaded</div>
+        </div>
+        <div style="text-align:center;padding:12px 20px;background:var(--warning-light);border-radius:10px;">
+          <div style="font-size:24px;font-weight:700;color:var(--warning);" id="docs-pending-count">22</div>
+          <div style="font-size:12px;color:var(--warning);">Still Needed</div>
+        </div>
+        <div style="text-align:center;padding:12px 20px;background:var(--gray-100);border-radius:10px;">
+          <div style="font-size:24px;font-weight:700;color:var(--gray-700);">22</div>
+          <div style="font-size:12px;color:var(--gray-500);">Total Required</div>
+        </div>
+      </div>
+    </div>
+
+    <div id="doc-sections"></div>
+
+  </div>
+
+  <!-- ===== TIMELINE TAB ===== -->
+  <div class="tab-pane" id="tab-timeline">
+
+    <h2 class="section-header">Journey Timeline</h2>
+    <p class="section-sub">Your month-by-month roadmap to filing the EB-1A petition in Q4 2026</p>
+
+    <div style="margin-bottom:20px;">
+      <div class="filing-target">
+        <div class="ft-icon">📅</div>
+        <div>
+          <div class="ft-label">Filing Window</div>
+          <div class="ft-value">October – December 2026</div>
+          <div class="ft-sub">I-140 EB-1A petition · Premium processing available (15 business days)</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-dot active">Now</div>
+        <div class="timeline-content">
+          <div class="timeline-phase">Phase 0 · Immediate</div>
+          <div class="timeline-title">Engage Immigration Attorney</div>
+          <div class="timeline-desc">Sign with an EB-1A specialist from AILA. Start documentation strategy with attorney. Also: begin collecting comp documentation and writing role narrative.</div>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot">M1</div>
+        <div class="timeline-content">
+          <div class="timeline-phase">Phase 1 · Month 1 (May 2026)</div>
+          <div class="timeline-title">File Comp Evidence + Blog Post + Conference Review Applications</div>
+          <div class="timeline-desc">Deliver comp documentation to attorney. Publish technical blog post on Towards Data Science / Walmart Tech Blog. Apply to NeurIPS/ICDM reviewer programs. Send 5 expert letter requests.</div>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot">M2</div>
+        <div class="timeline-content">
+          <div class="timeline-phase">Phase 2 · Month 2 (June 2026)</div>
+          <div class="timeline-title">arXiv Preprint + Patent + Trade Press Pitch</div>
+          <div class="timeline-desc">Expert letters in progress (follow up). Write and submit arXiv preprint. Begin trade press pitching. File provisional patent with IP attorney. Pitch Walmart Tech Blog if not yet published.</div>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot">M3</div>
+        <div class="timeline-content">
+          <div class="timeline-phase">Phase 3 · Month 3 (July 2026)</div>
+          <div class="timeline-title">Expert Letters + Conference Reviewer Confirmed + ACM Application</div>
+          <div class="timeline-desc">arXiv preprint published. At least 3 of 5 expert letters received. First conference reviewer role confirmed. Apply for ACM Senior Member. Minimum filing criteria met (3 criteria confirmed).</div>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot">M4</div>
+        <div class="timeline-content">
+          <div class="timeline-phase">Phase 4 · Month 4–5 (Aug–Sep 2026)</div>
+          <div class="timeline-title">Petition Assembly Begins</div>
+          <div class="timeline-desc">Attorney assembles petition draft. Gather remaining evidence artifacts. Address any RFE-prevention gaps attorney identifies. 4 criteria confirmed at this stage = strong petition.</div>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot">M6</div>
+        <div class="timeline-content">
+          <div class="timeline-phase">Phase 5 · Month 6 (Oct 2026)</div>
+          <div class="timeline-title">File USCIS I-140 Petition</div>
+          <div class="timeline-desc">Petition submitted to USCIS. Consider premium processing ($2,805) for 15 business day decision. 5 criteria confirmed = excellent case.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:20px;">
+      <div class="card-title">📈 Confidence Projection by Phase</div>
+      <table style="width:100%;border-collapse:collapse;font-size:14px;">
+        <thead>
+          <tr style="border-bottom:2px solid var(--gray-200);">
+            <th style="text-align:left;padding:8px 12px;color:var(--gray-600);">Phase</th>
+            <th style="text-align:left;padding:8px 12px;color:var(--gray-600);">Confirmed Criteria</th>
+            <th style="text-align:left;padding:8px 12px;color:var(--gray-600);">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom:1px solid var(--gray-100);">
+            <td style="padding:8px 12px;color:var(--gray-700);">Now</td>
+            <td style="padding:8px 12px;color:var(--gray-700);">1 (#8 Distinguished Role)</td>
+            <td style="padding:8px 12px;"><span class="badge badge-green">Strong ✅</span></td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--gray-100);">
+            <td style="padding:8px 12px;color:var(--gray-700);">Month 1</td>
+            <td style="padding:8px 12px;color:var(--gray-700);">2 (#8 + #9 Salary)</td>
+            <td style="padding:8px 12px;"><span class="badge badge-green">Strong ✅</span></td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--gray-100);">
+            <td style="padding:8px 12px;color:var(--gray-700);">Month 2–3</td>
+            <td style="padding:8px 12px;color:var(--gray-700);">3 (#8 + #9 + #5 Contributions)</td>
+            <td style="padding:8px 12px;"><span class="badge badge-green">Filing Minimum Met ✅</span></td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--gray-100);">
+            <td style="padding:8px 12px;color:var(--gray-700);">Month 4–5</td>
+            <td style="padding:8px 12px;color:var(--gray-700);">4 (#8 + #9 + #5 + #4 Judging)</td>
+            <td style="padding:8px 12px;"><span class="badge badge-blue">Strong Petition ✅✅</span></td>
+          </tr>
+          <tr>
+            <td style="padding:8px 12px;color:var(--gray-700);">Month 6+</td>
+            <td style="padding:8px 12px;color:var(--gray-700);">5 (#8 + #9 + #5 + #4 + #6 Publications)</td>
+            <td style="padding:8px 12px;"><span class="badge badge-green">Excellent Case ✅✅✅</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ===== RESOURCES TAB ===== -->
+  <div class="tab-pane" id="tab-resources">
+
+    <h2 class="section-header">Resources & Links</h2>
+    <p class="section-sub">Key websites and tools for your EB-1A journey</p>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">⚖️ Legal & USCIS</div>
+        <a class="resource-link" href="https://www.uscis.gov/working-in-the-united-states/permanent-workers/employment-based-immigration-first-preference-eb-1" target="_blank"><span class="rl-icon">🏛</span><span class="rl-name">USCIS EB-1A Policy Manual</span><span class="rl-arrow">→</span></a>
+        <a class="resource-link" href="https://www.aila.org/find-an-attorney" target="_blank"><span class="rl-icon">⚖️</span><span class="rl-name">AILA Attorney Finder (filter: Extraordinary Ability)</span><span class="rl-arrow">→</span></a>
+        <a class="resource-link" href="https://www.murthy.com" target="_blank"><span class="rl-icon">🏢</span><span class="rl-name">Murthy Law Firm (EB-1A specialists)</span><span class="rl-arrow">→</span></a>
+      </div>
+
+      <div class="card">
+        <div class="card-title">💰 Salary Benchmarks (Criterion #9)</div>
+        <a class="resource-link" href="https://www.levels.fyi" target="_blank"><span class="rl-icon">📊</span><span class="rl-name">Levels.fyi — Comp by company/role/location</span><span class="rl-arrow">→</span></a>
+        <a class="resource-link" href="https://www.bls.gov/oes" target="_blank"><span class="rl-icon">📈</span><span class="rl-name">BLS OES Wage Data (search code 15-2051)</span><span class="rl-arrow">→</span></a>
+        <a class="resource-link" href="https://h1bdata.info" target="_blank"><span class="rl-icon">🗃</span><span class="rl-name">H-1B LCA Salary Database</span><span class="rl-arrow">→</span></a>
+      </div>
+
+      <div class="card">
+        <div class="card-title">📝 Publications (Criterion #6)</div>
+        <a class="resource-link" href="https://arxiv.org/help/submit" target="_blank"><span class="rl-icon">📄</span><span class="rl-name">arXiv Submission Guide</span><span class="rl-arrow">→</span></a>
+        <a class="resource-link" href="https://towardsdatascience.com/submit" target="_blank"><span class="rl-icon">✍️</span><span class="rl-name">Towards Data Science — Submit Article</span><span class="rl-arrow">→</span></a>
+        <a class="resource-link" href="https://scholar.google.com" target="_blank"><span class="rl-icon">🎓</span><span class="rl-name">Google Scholar — Create Your Profile</span><span class="rl-arrow">→</span></a>
+      </div>
+
+      <div class="card">
+        <div class="card-title">🏆 Judging / Reviewing (Criterion #4)</div>
+        <a class="resource-link" href="https://neuripscf.org" target="_blank"><span class="rl-icon">🧠</span><span class="rl-name">NeurIPS 2026 Reviewer Application</span><span class="rl-arrow">→</span></a>
+        <a class="resource-link" href="https://icdm.cs.kent.edu" target="_blank"><span class="rl-icon">🔬</span><span class="rl-name">ICDM 2026 Reviewer Info</span><span class="rl-arrow">→</span></a>
+        <a class="resource-link" href="https://drivendata.org" target="_blank"><span class="rl-icon">🎯</span><span class="rl-name">DrivenData Competition Judging</span><span class="rl-arrow">→</span></a>
+        <a class="resource-link" href="https://mlh.io/judges" target="_blank"><span class="rl-icon">⚡</span><span class="rl-name">MLH Hackathon Judging Application</span><span class="rl-arrow">→</span></a>
+      </div>
+
+      <div class="card">
+        <div class="card-title">🏅 Elite Memberships (Criterion #2)</div>
+        <a class="resource-link" href="https://www.acm.org/membership/senior-member" target="_blank"><span class="rl-icon">🎖</span><span class="rl-name">ACM Senior Member Application (~$198/yr)</span><span class="rl-arrow">→</span></a>
+        <a class="resource-link" href="https://www.ieeeusa.org/careers/senior-member" target="_blank"><span class="rl-icon">⚙️</span><span class="rl-name">IEEE Senior Member Application</span><span class="rl-arrow">→</span></a>
+      </div>
+
+      <div class="card">
+        <div class="card-title">🎙 Media / Podcasts (Criterion #3)</div>
+        <a class="resource-link" href="https://changelog.com/practicalai" target="_blank"><span class="rl-icon">🎧</span><span class="rl-name">Practical AI Podcast — Guest Request</span><span class="rl-arrow">→</span></a>
+        <a class="resource-link" href="https://twimlai.com/suggest-guest" target="_blank"><span class="rl-icon">🎙</span><span class="rl-name">TWIML AI Podcast — Suggest a Guest</span><span class="rl-arrow">→</span></a>
+        <a class="resource-link" href="https://venturebeat.com/contact" target="_blank"><span class="rl-icon">📰</span><span class="rl-name">VentureBeat AI — Press Pitch</span><span class="rl-arrow">→</span></a>
+      </div>
+
+      <div class="card">
+        <div class="card-title">🔒 Patent Filing (Criterion #5)</div>
+        <a class="resource-link" href="https://www.uspto.gov/patents/apply/filing-online" target="_blank"><span class="rl-icon">🗂</span><span class="rl-name">USPTO Provisional Patent Filing</span><span class="rl-arrow">→</span></a>
+      </div>
+
+      <div class="card">
+        <div class="card-title">💼 Cost Estimates</div>
+        <div style="font-size:13px;color:var(--gray-600);line-height:2;">
+          <div>Attorney fees (full EB-1A): <strong>$5,000–$15,000</strong></div>
+          <div>USCIS I-140 filing fee: <strong>$715</strong></div>
+          <div>Premium processing (optional): <strong>$2,805</strong></div>
+          <div>Provisional patent (optional): <strong>$2,000–$5,000</strong></div>
+          <div style="border-top:1px solid var(--gray-200);margin-top:8px;padding-top:8px;">Total estimate (without patent): <strong>$8,000–$18,000</strong></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Notification bar -->
+<div class="notif-bar" id="notif-bar">✓ Progress saved</div>
+
+<!-- ===================== CHAT PANEL ===================== -->
+<!-- Floating toggle button -->
+<button class="chat-toggle-btn" id="chat-toggle-btn" onclick="toggleChat()" title="Ask your EB-1A AI Assistant">
+  <svg id="chat-icon-open" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+  <svg id="chat-icon-close" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="display:none"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+</button>
+
+<!-- Side panel -->
+<div class="chat-panel" id="chat-panel">
+  <!-- Header -->
+  <div class="chat-header">
+    <div style="font-size:28px;line-height:1;">🎯</div>
+    <div class="chat-header-info">
+      <div class="chat-header-title">EB-1A AI Assistant</div>
+      <div class="chat-header-sub">Powered by OpenAI · Context-aware advice</div>
+    </div>
+    <button class="chat-close-btn" onclick="toggleChat()" title="Close">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+
+  <!-- API-key setup screen -->
+  <div class="chat-setup" id="chat-setup">
+    <div class="chat-setup-icon">🔑</div>
+    <div class="chat-setup-title">Connect your OpenAI key</div>
+    <div class="chat-setup-desc">Your key is stored only in your browser and never sent anywhere except OpenAI.</div>
+    <input class="chat-setup-input" id="chat-api-key-input" type="password" placeholder="sk-..." autocomplete="off" onkeydown="if(event.key==='Enter')saveChatKey()">
+    <button class="chat-setup-btn" onclick="saveChatKey()">Save &amp; Start Chatting</button>
+    <div class="chat-setup-note">Key is saved to localStorage. Clear it anytime with the link at the bottom of the chat.</div>
+  </div>
+
+  <!-- Chat interface -->
+  <div class="chat-interface" id="chat-interface" style="display:none">
+    <!-- Quick-start suggestion chips -->
+    <div class="chat-suggestions" id="chat-suggestions">
+      <button class="chat-suggestion" onclick="sendSuggestion(this)">📋 What should I do next?</button>
+      <button class="chat-suggestion" onclick="sendSuggestion(this)">💰 Explain my salary criterion</button>
+      <button class="chat-suggestion" onclick="sendSuggestion(this)">✍️ How do I get expert letters?</button>
+      <button class="chat-suggestion" onclick="sendSuggestion(this)">📊 How is my progress?</button>
+    </div>
+
+    <!-- Message thread -->
+    <div class="chat-messages" id="chat-messages"></div>
+
+    <!-- Footer: input + attach -->
+    <div class="chat-footer">
+      <textarea class="chat-input" id="chat-input" placeholder="Ask anything about your EB-1A journey…" rows="1" onkeydown="chatKeydown(event)" oninput="autoResizeChatInput(this)"></textarea>
+      <button class="chat-send-btn" id="chat-send-btn" onclick="sendChat()" title="Send">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      </button>
+    </div>
+    <div class="chat-key-reset" onclick="resetChatKey()">🔄 Reset API key</div>
+  </div>
+</div>
+
+<script>
+// =================== STATE ===================
+const STORAGE_KEY = 'eb1a_dashboard_v2';
+let state = {
+  checks: {},
+  docs: {},
+  quickwins: {},
+  attorneyDone: false
+};
+
+function loadState() {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) state = JSON.parse(saved);
+  } catch(e) {}
+}
+
+function saveState() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  showNotif('✓ Progress saved');
+}
+
+function showNotif(msg) {
+  const n = document.getElementById('notif-bar');
+  n.textContent = msg;
+  n.style.display = 'block';
+  clearTimeout(n._t);
+  n._t = setTimeout(() => { n.style.display = 'none'; }, 2000);
+}
+
+// =================== TABS ===================
+function showTab(name) {
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// =================== CRITERIA CARDS ===================
+function toggleCriterion(id) {
+  const card = document.getElementById('card-' + id);
+  card.classList.toggle('open');
+}
+
+function jumpToCriterion(id) {
+  showTab('action-plan');
+  // Update nav tab manually
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.nav-tab')[1].classList.add('active');
+  setTimeout(() => {
+    const card = document.getElementById('card-' + id);
+    if (card) {
+      card.classList.add('open');
+      card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, 50);
+}
+
+// =================== CHECKBOXES ===================
+function toggleCheck(item, id) {
+  const cb = document.getElementById(id);
+  cb.checked = !cb.checked;
+  item.classList.toggle('checked', cb.checked);
+  state.checks[id] = cb.checked;
+  saveState();
+  updateProgress();
+}
+
+function restoreChecks() {
+  Object.entries(state.checks).forEach(([id, checked]) => {
+    const cb = document.getElementById(id);
+    if (cb) {
+      cb.checked = checked;
+      const item = cb.closest('.checklist-item');
+      if (item) item.classList.toggle('checked', checked);
+    }
+  });
+}
+
+// =================== QUICK WINS ===================
+function toggleQuickWin(item, id) {
+  const cb = item.querySelector('input[type="checkbox"]');
+  cb.checked = !cb.checked;
+  item.classList.toggle('done', cb.checked);
+  state.quickwins[id] = cb.checked;
+  saveState();
+  updateProgress();
+}
+
+function restoreQuickWins() {
+  document.querySelectorAll('.quickwin-item').forEach(item => {
+    const id = item.dataset.id;
+    if (state.quickwins[id]) {
+      const cb = item.querySelector('input[type="checkbox"]');
+      if (cb) cb.checked = true;
+      item.classList.add('done');
+    }
+  });
+}
+
+// =================== ATTORNEY ===================
+function markAttorneyDone() {
+  state.attorneyDone = true;
+  saveState();
+  const btn = event.target;
+  btn.textContent = '✅ Done — Attorney Engaged!';
+  btn.style.background = '#dcfce7';
+  btn.style.color = '#15803d';
+  showNotif('Attorney step marked complete!');
+}
+
+// =================== PROGRESS CALCULATIONS ===================
+const criteriaItems = {
+  c8: ['c8-a1','c8-a2','c8-a3','c8-a4','c8-a5','c8-d1','c8-d2','c8-d3','c8-d4','c8-d5','c8-d6'],
+  c9: ['c9-a1','c9-a2','c9-a3','c9-a4','c9-a5','c9-d1','c9-d2','c9-d3','c9-d4','c9-d5','c9-d6','c9-d7'],
+  c5: ['c5-a1','c5-a2','c5-a3','c5-a4','c5-b1','c5-b2','c5-b3','c5-b4','c5-b5','c5-c1','c5-c2','c5-c3','c5-d1','c5-d2','c5-d3','c5-d4'],
+  c4: ['c4-a1','c4-a2','c4-a3','c4-a4','c4-b1','c4-b2','c4-b3','c4-d1','c4-d2','c4-d3','c4-d4'],
+  c6: ['c6-a1','c6-a2','c6-a3','c6-a4','c6-d1','c6-d2','c6-d3','c6-d4'],
+  c3: ['c3-a1','c3-a2','c3-a3','c3-a4','c3-a5','c3-d1','c3-d2','c3-d3'],
+  c2: ['c2-a1','c2-a2','c2-a3','c2-d1','c2-d2','c2-d3']
+};
+
+function updateProgress() {
+  let totalTasks = 0, doneTasks = 0;
+  let criteriaStrong = 1; // #8 already strong
+
+  Object.entries(criteriaItems).forEach(([crit, items]) => {
+    const done = items.filter(id => state.checks[id]).length;
+    const pct = Math.round((done / items.length) * 100);
+    totalTasks += items.length;
+    doneTasks += done;
+
+    // Update mini progress bars
+    const prog = document.getElementById('prog-' + crit);
+    const pct2 = document.getElementById('pct2-' + crit);
+    const miniProg = document.getElementById('mini-' + crit);
+    const pctEl = document.getElementById('pct-' + crit);
+
+    if (prog) { prog.style.width = pct + '%'; }
+    if (pct2) { pct2.textContent = pct + '%'; }
+    if (miniProg) { miniProg.style.width = pct + '%'; }
+    if (pctEl) { pctEl.textContent = pct + '%'; }
+
+    if (pct >= 80) criteriaStrong++;
+  });
+
+  // Quick wins
+  const qwTotal = 5;
+  const qwDone = Object.values(state.quickwins).filter(Boolean).length;
+
+  // Docs
+  const docsTotal = Object.values(docData).flatMap(g => g.items).length;
+  const docsUploaded = Object.keys(state.docs).length;
+
+  // Update header stats
+  const taskPct = Math.round((doneTasks / totalTasks) * 100);
+  document.getElementById('stat-tasks').textContent = taskPct + '%';
+  document.getElementById('stat-criteria').textContent = criteriaStrong + ' / 5';
+  document.getElementById('stat-docs').textContent = docsUploaded + ' / ' + docsTotal;
+  document.getElementById('overall-progress').style.width = Math.max(5, taskPct) + '%';
+
+  // Update doc counts
+  const duEl = document.getElementById('docs-uploaded-count');
+  const dpEl = document.getElementById('docs-pending-count');
+  if (duEl) duEl.textContent = docsUploaded;
+  if (dpEl) dpEl.textContent = (docsTotal - docsUploaded);
+}
+
+// =================== DOCUMENT TRACKER ===================
+const docData = {
+  'Criterion #8 — Distinguished Role': {
+    items: [
+      { id: 'd-c8-1', name: 'Employment Verification Letter (HR)', icon: '📄' },
+      { id: 'd-c8-2', name: 'Org Chart Excerpt (your position)', icon: '🗂' },
+      { id: 'd-c8-3', name: 'Employer Support Letter (Manager/VP)', icon: '✉️' },
+      { id: 'd-c8-4', name: 'Role Impact Narrative (1 page, self-authored)', icon: '✍️' },
+      { id: 'd-c8-5', name: 'Performance Reviews / Recognition Artifacts', icon: '🏆' },
+      { id: 'd-c8-6', name: 'LinkedIn Profile Printout', icon: '💼' }
+    ]
+  },
+  'Criterion #9 — High Salary': {
+    items: [
+      { id: 'd-c9-1', name: 'Pay Stubs (most recent 2–3 months)', icon: '💵' },
+      { id: 'd-c9-2', name: 'Offer Letter / Compensation Letter', icon: '📑' },
+      { id: 'd-c9-3', name: 'RSU / Equity Grant Letters', icon: '📈' },
+      { id: 'd-c9-4', name: 'Most Recent W-2', icon: '🧾' },
+      { id: 'd-c9-5', name: 'Levels.fyi Screenshots (PDF)', icon: '📊' },
+      { id: 'd-c9-6', name: 'BLS Wage Data Printout (code 15-2051)', icon: '📉' },
+      { id: 'd-c9-7', name: 'Comp Comparison Narrative (1-page)', icon: '📋' }
+    ]
+  },
+  'Criterion #5 — Original Contributions': {
+    items: [
+      { id: 'd-c5-1', name: '3–5 Expert Recommendation Letters (signed)', icon: '✉️' },
+      { id: 'd-c5-2', name: 'Published Blog Post (URL + platform stats)', icon: '📝' },
+      { id: 'd-c5-3', name: 'Patent Application Filing Receipt (USPTO)', icon: '🔒' },
+      { id: 'd-c5-4', name: 'Work Metrics Evidence (internal verification)', icon: '📐' }
+    ]
+  },
+  'Criterion #4 — Judging': {
+    items: [
+      { id: 'd-c4-1', name: 'Conference Reviewer Acceptance Email', icon: '📧' },
+      { id: 'd-c4-2', name: 'Reviewer Profile Screenshot', icon: '🖥' },
+      { id: 'd-c4-3', name: 'Review Assignment List (titles only)', icon: '📋' },
+      { id: 'd-c4-4', name: 'Event Program / Committee Page', icon: '📰' }
+    ]
+  },
+  'Criterion #6 — Publications': {
+    items: [
+      { id: 'd-c6-1', name: 'Blog Post URL + Platform Stats', icon: '🌐' },
+      { id: 'd-c6-2', name: 'arXiv Preprint (ID + confirmation email)', icon: '📄' },
+      { id: 'd-c6-3', name: 'Workshop Paper Acceptance (if pursued)', icon: '🏅' }
+    ]
+  }
+};
+
+function buildDocSections() {
+  const container = document.getElementById('doc-sections');
+  if (!container) return;
+
+  Object.entries(docData).forEach(([section, data]) => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `<div class="card-title">📁 ${section}</div>`;
+
+    const list = document.createElement('ul');
+    list.className = 'doc-list';
+
+    data.items.forEach(item => {
+      const li = document.createElement('li');
+      li.className = 'doc-item';
+      li.id = 'doc-li-' + item.id;
+
+      const uploaded = state.docs[item.id];
+
+      li.innerHTML = `
+        <span class="doc-icon">${item.icon}</span>
+        <div class="doc-info">
+          <div class="doc-name">${item.name}</div>
+          ${uploaded ? `<div class="doc-criterion" style="color:var(--success);">✓ ${uploaded.name}</div>` : '<div class="doc-criterion">Not yet uploaded</div>'}
+        </div>
+        <div class="doc-status">
+          ${uploaded
+            ? `<span class="uploaded-tag">✅ Uploaded</span>`
+            : `<label class="upload-btn" for="file-${item.id}">📎 Upload</label><input type="file" class="file-input" id="file-${item.id}" onchange="handleUpload(event,'${item.id}')">`
+          }
+        </div>
+      `;
+      list.appendChild(li);
+    });
+
+    card.appendChild(list);
+    container.appendChild(card);
+  });
+}
+
+function handleUpload(event, docId) {
+  const file = event.target.files[0];
+  if (!file) return;
+  state.docs[docId] = { name: file.name, uploadedAt: new Date().toISOString() };
+  saveState();
+  // Rebuild the doc item
+  const li = document.getElementById('doc-li-' + docId);
+  if (li) {
+    const docItem = Object.values(docData).flatMap(g => g.items).find(i => i.id === docId);
+    li.innerHTML = `
+      <span class="doc-icon">${docItem.icon}</span>
+      <div class="doc-info">
+        <div class="doc-name">${docItem.name}</div>
+        <div class="doc-criterion" style="color:var(--success);">✓ ${file.name}</div>
+      </div>
+      <div class="doc-status"><span class="uploaded-tag">✅ Uploaded</span></div>
+    `;
+  }
+  updateProgress();
+  showNotif('✓ ' + file.name + ' uploaded');
+}
+
+// =================== CHAT ===================
+const CHAT_KEY_STORAGE = 'eb1a_openai_key';
+const CHAT_HISTORY_STORAGE = 'eb1a_chat_history';
+let chatMessages = []; // [{role, content}]
+let chatOpen = false;
+
+function toggleChat() {
+  chatOpen = !chatOpen;
+  const panel = document.getElementById('chat-panel');
+  const iconOpen = document.getElementById('chat-icon-open');
+  const iconClose = document.getElementById('chat-icon-close');
+  panel.classList.toggle('open', chatOpen);
+  iconOpen.style.display = chatOpen ? 'none' : '';
+  iconClose.style.display = chatOpen ? '' : 'none';
+
+  if (chatOpen) {
+    const key = localStorage.getItem(CHAT_KEY_STORAGE);
+    if (key) {
+      showChatInterface();
+    }
+  }
+}
+
+function saveChatKey() {
+  const input = document.getElementById('chat-api-key-input');
+  const key = (input.value || '').trim();
+  if (!key.startsWith('sk-')) {
+    input.style.borderColor = 'var(--danger)';
+    return;
+  }
+  localStorage.setItem(CHAT_KEY_STORAGE, key);
+  showChatInterface();
+}
+
+function resetChatKey() {
+  localStorage.removeItem(CHAT_KEY_STORAGE);
+  localStorage.removeItem(CHAT_HISTORY_STORAGE);
+  chatMessages = [];
+  document.getElementById('chat-messages').innerHTML = '';
+  document.getElementById('chat-api-key-input').value = '';
+  document.getElementById('chat-setup').style.display = '';
+  document.getElementById('chat-interface').style.display = 'none';
+}
+
+function showChatInterface() {
+  document.getElementById('chat-setup').style.display = 'none';
+  document.getElementById('chat-interface').style.display = '';
+  // Restore history
+  try {
+    const saved = localStorage.getItem(CHAT_HISTORY_STORAGE);
+    if (saved) {
+      chatMessages = JSON.parse(saved);
+      const thread = document.getElementById('chat-messages');
+      chatMessages.forEach(m => {
+        if (m.role !== 'system') appendChatBubble(m.role, m.content, false);
+      });
+      if (chatMessages.length > 1) {
+        document.getElementById('chat-suggestions').style.display = 'none';
+      }
+    }
+  } catch(e) {}
+  scrollChatToBottom();
+  document.getElementById('chat-input').focus();
+}
+
+function buildSystemPrompt() {
+  // Gather live progress state
+  let criteriaProgress = [];
+  Object.entries(criteriaItems).forEach(([crit, items]) => {
+    const done = items.filter(id => state.checks[id]).length;
+    criteriaProgress.push(`${crit}: ${done}/${items.length} tasks done`);
+  });
+  const docsTotal = Object.values(docData).flatMap(g => g.items).length;
+  const docsUploaded = Object.keys(state.docs).length;
+
+  return `You are a knowledgeable EB-1A immigration assistant helping Karan Chandra, a Senior Data Scientist at Walmart Global Tech, through his EB-1A extraordinary ability green card journey.
+
+Current dashboard state:
+- Criteria progress: ${criteriaProgress.join(', ')}
+- Documents uploaded: ${docsUploaded}/${docsTotal}
+- Attorney step done: ${state.attorneyDone}
+- Target filing: Q4 2026
+
+Criteria Karan is pursuing:
+- Criterion #8: Distinguished role (lead data scientist, patent, publications)
+- Criterion #9: High salary (>90th percentile for data scientists)
+- Criterion #5: Original contributions (recommendation letters, patents, blog post)
+- Criterion #4: Judging (conference/journal reviewer)
+- Criterion #6: Publications (blog, arXiv)
+
+Give concise, actionable advice. When you reference a criterion, badge it like [Criterion #8]. For numbered steps, use ordered lists. Be encouraging but accurate. Keep responses under 300 words unless asked for detail.`;
+}
+
+function buildCriterionBadge(content) {
+  return content.replace(/\[Criterion #(\d+)\]/g, '<span class="chat-action-tag">Criterion #$1</span>');
+}
+
+function appendChatBubble(role, content, animate) {
+  const thread = document.getElementById('chat-messages');
+  const isUser = role === 'user';
+  const wrap = document.createElement('div');
+  wrap.className = 'chat-message' + (isUser ? ' user' : '');
+
+  const avatar = document.createElement('div');
+  avatar.className = 'chat-avatar ' + (isUser ? 'user-av' : 'ai');
+  avatar.textContent = isUser ? '👤' : '🎯';
+
+  const bubble = document.createElement('div');
+  bubble.className = 'chat-bubble ' + (isUser ? 'user' : 'ai');
+
+  if (isUser) {
+    bubble.textContent = content;
+  } else {
+    // Render simple markdown: bold, lists, line breaks, criterion badges
+    let html = content
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\[Criterion #(\d+)\]/g, '<span class="chat-action-tag">Criterion #$1</span>')
+      .replace(/^\d+\.\s+(.+)$/gm, '<li>$1</li>')
+      .replace(/(<li>.*<\/li>)/s, '<ol>$1</ol>')
+      .replace(/\n/g, '<br>');
+    bubble.innerHTML = html;
+  }
+
+  wrap.appendChild(avatar);
+  wrap.appendChild(bubble);
+  if (animate) {
+    wrap.style.opacity = '0';
+    wrap.style.transform = 'translateY(8px)';
+    wrap.style.transition = 'opacity 0.25s, transform 0.25s';
+    thread.appendChild(wrap);
+    requestAnimationFrame(() => {
+      wrap.style.opacity = '1';
+      wrap.style.transform = 'translateY(0)';
+    });
+  } else {
+    thread.appendChild(wrap);
+  }
+  scrollChatToBottom();
+}
+
+function appendTypingIndicator() {
+  const thread = document.getElementById('chat-messages');
+  const wrap = document.createElement('div');
+  wrap.className = 'chat-message';
+  wrap.id = 'chat-typing-indicator';
+  wrap.innerHTML = '<div class="chat-avatar ai">🎯</div><div class="chat-typing"><span></span><span></span><span></span></div>';
+  thread.appendChild(wrap);
+  scrollChatToBottom();
+  return wrap;
+}
+
+function scrollChatToBottom() {
+  const thread = document.getElementById('chat-messages');
+  thread.scrollTop = thread.scrollHeight;
+}
+
+async function sendChat() {
+  const input = document.getElementById('chat-input');
+  const text = input.value.trim();
+  if (!text) return;
+  const key = localStorage.getItem(CHAT_KEY_STORAGE);
+  if (!key) return;
+
+  input.value = '';
+  input.style.height = '';
+  document.getElementById('chat-suggestions').style.display = 'none';
+  document.getElementById('chat-send-btn').disabled = true;
+
+  appendChatBubble('user', text, true);
+  if (chatMessages.length === 0) {
+    chatMessages.push({ role: 'system', content: buildSystemPrompt() });
+  }
+  chatMessages.push({ role: 'user', content: text });
+
+  const typing = appendTypingIndicator();
+
+  try {
+    const resp = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + key
+      },
+      body: JSON.stringify({
+        model: 'gpt-4o-mini',
+        messages: chatMessages,
+        max_tokens: 600,
+        temperature: 0.7
+      })
+    });
+
+    typing.remove();
+
+    if (!resp.ok) {
+      const err = await resp.json().catch(() => ({}));
+      const msg = err.error?.message || ('API error ' + resp.status);
+      appendChatBubble('assistant', '⚠️ ' + msg, true);
+      return;
+    }
+
+    const data = await resp.json();
+    const reply = data.choices?.[0]?.message?.content || '(no response)';
+    chatMessages.push({ role: 'assistant', content: reply });
+
+    try { localStorage.setItem(CHAT_HISTORY_STORAGE, JSON.stringify(chatMessages)); } catch(e) {}
+
+    appendChatBubble('assistant', reply, true);
+
+    // Toast if reply mentions criteria updates
+    if (/criterion/i.test(reply)) {
+      showNotif('💡 AI highlighted a criterion — check the response!');
+    }
+  } catch(e) {
+    typing.remove();
+    appendChatBubble('assistant', '⚠️ Network error: ' + e.message, true);
+  } finally {
+    document.getElementById('chat-send-btn').disabled = false;
+    document.getElementById('chat-input').focus();
+  }
+}
+
+function sendSuggestion(btn) {
+  document.getElementById('chat-input').value = btn.textContent.replace(/^[^\s]+\s/, '');
+  sendChat();
+}
+
+function chatKeydown(e) {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendChat();
+  }
+}
+
+function autoResizeChatInput(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+}
+
+// =================== INIT ===================
+loadState();
+buildDocSections();
+restoreChecks();
+restoreQuickWins();
+updateProgress();
+
+if (state.attorneyDone) {
+  const btn = document.querySelector('.cta-btn');
+  if (btn) {
+    btn.textContent = '✅ Done — Attorney Engaged!';
+    btn.style.background = '#dcfce7';
+    btn.style.color = '#15803d';
+  }
+}
+</script>
+
+</body>
+</html>
